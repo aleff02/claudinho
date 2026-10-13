@@ -14,7 +14,15 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: |
+          set +e
+          ./gradlew assembleDebug --no-daemon --stacktrace > build.log 2>&1
+          code=$?
+          if [ $code -ne 0 ]; then
+            grep -E "^e: |error:|AAPT|\.xml:[0-9]" build.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
+            grep -A8 "What went wrong" build.log | head -14 | while IFS= read -r l; do echo "::error::$l"; done
+          fi
+          exit $code
       - uses: actions/upload-artifact@v4
         with:
           name: Ata-debug-apk
