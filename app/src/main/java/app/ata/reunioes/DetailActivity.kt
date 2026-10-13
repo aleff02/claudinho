@@ -185,7 +185,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun cycleSpeed() {
-        val i = (speeds.indexOf(speed) + 1) % speeds.size
+        val i = (speeds.indexOfFirst { it == speed } + 1) % speeds.size
         speed = speeds[i]
         b.btnSpeed.text = speed.toString().replace(".0", "").replace('.', ',') + "×"
         if (mp?.isPlaying == true) applySpeed()
