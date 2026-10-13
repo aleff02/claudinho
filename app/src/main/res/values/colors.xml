@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ata_bg">#F1F3F5</color>
+    <color name="ata_rec">#D3302A</color>
+    <color name="ata_muted">#59636E</color>
+    <color name="ata_icon_bg">#0E1114</color>
+</resources>
