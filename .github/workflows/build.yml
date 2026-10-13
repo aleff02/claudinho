@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -27,3 +29,10 @@ jobs:
         with:
           name: Ata-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+      - name: Publicar APK na aba Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk Ata.apk
+          gh release delete latest -y --cleanup-tag || true
+          gh release create latest Ata.apk --title "Ata (APK)" --notes "APK de teste do Ata, assinado com chave de depuração. Instalar permite 'fontes desconhecidas'."
