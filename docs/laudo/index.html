@@ -148,6 +148,35 @@ td a{color:var(--cyan)}
 .perfil .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--orange));display:grid;place-items:center;font-weight:800;color:#1a0a00;flex:none}
 .perfil b{display:block}.perfil small{color:var(--mut);font-size:12.5px}
 .perfil button{margin-left:auto}
+
+/* ======== CÂMERA ======== */
+.cam{position:fixed;inset:0;background:#000;z-index:60;display:none;overflow:hidden;font-family:Inter,sans-serif;color:#fff}
+.cam.open{display:block}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam-frame{position:absolute;left:7%;right:7%;top:18%;bottom:26%;pointer-events:none}
+.cam-frame i{position:absolute;width:34px;height:34px;border:3px solid #ff6a13;filter:drop-shadow(0 0 6px rgba(255,106,19,.8))}
+.cam-frame i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
+.cam-frame i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
+.cam-frame i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0;border-radius:0 0 0 10px}
+.cam-frame i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.cam-scan{position:absolute;left:4%;right:4%;height:2px;background:linear-gradient(90deg,transparent,#ff6a13,transparent);box-shadow:0 0 12px #ff6a13;animation:scan 2.8s linear infinite;opacity:.8}
+.cam-top{position:absolute;left:0;right:0;top:0;padding:calc(12px + env(safe-area-inset-top)) 14px 30px;display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent)}
+.cam-tt{flex:1;text-align:center}.cam-tt b{display:block;font-size:16px}.cam-tt small{font-family:Orbitron;letter-spacing:.12em;color:#ffb27a;font-size:12px}
+.cam-ib{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.35);color:#fff;font-size:18px;cursor:pointer;backdrop-filter:blur(6px)}
+.cam-ib.on{background:#ff6a13;border-color:#ff6a13}
+.cam-hint{position:absolute;left:0;right:0;top:calc(18% - 34px);text-align:center;font-size:13px;color:rgba(255,255,255,.85);text-shadow:0 1px 4px #000}
+.cam-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+.cam-flash.on{opacity:.85;transition:none}
+.cam-bot{position:absolute;left:0;right:0;bottom:0;padding:26px 18px calc(22px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;background:linear-gradient(0deg,rgba(0,0,0,.8),transparent)}
+.cam-th{display:flex;gap:6px;width:34%;overflow:hidden}
+.cam-th img{width:44px;height:44px;border-radius:9px;object-fit:cover;border:2px solid #fff}
+.cam-shot{width:78px;height:78px;border-radius:50%;border:4px solid #fff;background:transparent;padding:5px;cursor:pointer;flex:none}
+.cam-shot span{display:block;width:100%;height:100%;border-radius:50%;background:#ff6a13;box-shadow:0 0 22px rgba(255,106,19,.8);transition:.1s}
+.cam-shot:active span{transform:scale(.88)}
+.cam-shot:disabled{opacity:.4}
+.cam-ok{width:34%;border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:999px;padding:12px 10px;font:600 14px Inter,sans-serif;cursor:pointer;backdrop-filter:blur(6px)}
+.cam-ok b{color:#ffb27a;margin-left:4px}
+.cam-err{position:absolute;left:20px;right:20px;top:40%;background:rgba(20,14,10,.92);border:1px solid #ff6a13;border-radius:16px;padding:18px;text-align:center;font-size:14px;line-height:1.5}
 /* ======== PAINEL PROFISSIONAL (claro) ======== */
 body.pmode{background:#f5f3f1;color:#1f2328}
 body.pmode:before{display:none}
@@ -385,13 +414,32 @@ body.pmode:before{display:none}
     <button class="mic" id="mic" type="button">🎙</button></div>
   <label class="f">Fotos (até 4)</label>
   <div class="photos" id="shPhotos"></div>
-  <input type="file" id="fileIn" accept="image/*" capture="environment" class="hidden" multiple>
+  <input type="file" id="fileIn" accept="image/*" capture="environment" class="hidden">
   <div class="err" id="shErr"></div>
   <div class="row" style="margin-top:12px">
     <button class="btn ghost" id="shCancel">Cancelar</button>
     <button class="btn orange" id="shSave">Salvar avaria</button>
   </div>
 </div></div>
+
+<!-- ================= CÂMERA DO APP ================= -->
+<div class="cam" id="cam">
+  <video id="camV" playsinline muted autoplay></video>
+  <div class="cam-frame"><i></i><i></i><i></i><i></i><div class="cam-scan"></div></div>
+  <div class="cam-top">
+    <button class="cam-ib" id="camX" title="Fechar">✕</button>
+    <div class="cam-tt"><b id="camPeca"></b><small id="camPlaca"></small></div>
+    <button class="cam-ib" id="camTorch" title="Lanterna">🔦</button>
+  </div>
+  <div class="cam-hint" id="camHint">Enquadre a avaria dentro da moldura</div>
+  <div class="cam-flash" id="camFlash"></div>
+  <div class="cam-bot">
+    <div class="cam-th" id="camTh"></div>
+    <button class="cam-shot" id="camShot" title="Tirar foto"><span></span></button>
+    <button class="cam-ok" id="camOk">Concluir <b id="camN">0/4</b></button>
+  </div>
+  <div class="cam-err hidden" id="camErr"></div>
+</div>
 
 <!-- ================= PAINEL (gestão) ================= -->
 <div id="painel" class="pm hidden">
@@ -659,11 +707,11 @@ function chipGroup(sel,opts,val,multi,cb){
 function renderFotos(){
   const box=$('#shPhotos'); box.innerHTML='';
   edit.fotos.forEach((f,i)=>{const p=el('div',{className:'ph'},`<img src="${f}"><button>×</button><span class="kb">${kbDe(f)} KB</span>`);p.querySelector('button').onclick=()=>{edit.fotos.splice(i,1);renderFotos();};box.append(p);});
-  if(edit.fotos.length<4){const a=el('div',{className:'add'},'📷');a.onclick=()=>$('#fileIn').click();box.append(a);}
+  if(edit.fotos.length<4){const a=el('div',{className:'add'},'📷');a.onclick=abrirCamera;box.append(a);}
 }
 $('#fileIn').addEventListener('change',async e=>{
   for(const f of [...e.target.files].slice(0,4-edit.fotos.length)){
-    try{ edit.fotos.push(await comprimir(f)); }catch(x){ toast('Não consegui ler essa foto'); }
+    try{ const img=await carregarImg(f); edit.fotos.push(codificar(img,img.width,img.height)); }catch(x){ toast('Não consegui ler essa foto'); }
   }
   e.target.value=''; renderFotos();
 });
@@ -675,20 +723,79 @@ function carregarImg(file){
   return new Promise((res,rej)=>{const u=URL.createObjectURL(file);const img=new Image();
     img.onload=()=>{URL.revokeObjectURL(u);res(img);};img.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('imagem inválida'));};img.src=u;});
 }
-async function comprimir(file){
-  const img=await carregarImg(file);
+/* Carimbo na foto: placa, peça, loja e data/hora (prova de que foi tirada na hora) */
+function carimbar(g,w,h){
+  const bh=Math.max(34,Math.round(h*.085)), y=h-bh;
+  g.fillStyle='rgba(0,0,0,.62)'; g.fillRect(0,y,w,bh);
+  g.fillStyle='#ff6a13'; g.fillRect(0,y,Math.max(4,Math.round(w*.006)),bh);
+  const d=new Date(), pad=n=>String(n).padStart(2,'0');
+  const quando=`${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const fs=Math.round(bh*.36), x=Math.round(bh*.4);
+  g.fillStyle='#fff'; g.textBaseline='middle';
+  g.font=`700 ${fs}px Inter,Arial,sans-serif`; g.fillText(`${laudo.placa||'—'} · ${edit?.peca||''}`,x,y+bh*.32);
+  g.font=`500 ${Math.round(fs*.82)}px Inter,Arial,sans-serif`; g.fillStyle='rgba(255,255,255,.85)';
+  g.fillText(`${quando} · ${laudo.loja||''}`,x,y+bh*.72);
+  g.textAlign='right'; g.fillStyle='#ffb27a'; g.font=`700 ${Math.round(fs*.75)}px Inter,Arial,sans-serif`;
+  g.fillText('LAUDO DE AVARIA',w-x,y+bh*.5); g.textAlign='left';
+}
+/* Redimensiona, carimba e comprime (WebP/JPEG) até caber no teto de KB */
+function codificar(src,sw,sh){
   const tipo=WEBP_OK?'image/webp':'image/jpeg';
   let lado=FOTO_MAX_PX, q=WEBP_OK?.62:.68, out='';
   for(let t=0;t<8;t++){
-    const s=Math.min(1,lado/Math.max(img.width,img.height));
-    const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
-    const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(img,0,0,c.width,c.height);
+    const s=Math.min(1,lado/Math.max(sw,sh));
+    const c=document.createElement('canvas'); c.width=Math.round(sw*s); c.height=Math.round(sh*s);
+    const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(src,0,0,c.width,c.height);
+    carimbar(g,c.width,c.height);
     out=c.toDataURL(tipo,q);
     if(kbDe(out)<=FOTO_MAX_KB) break;
     if(q>.42) q-=.08; else lado=Math.round(lado*.85); // primeiro baixa qualidade, depois tamanho
   }
   return out;
 }
+
+/* ================= CÂMERA DO APP (sem galeria) ================= */
+let camStream=null, camTorch=false;
+async function abrirCamera(){
+  if(edit.fotos.length>=4) return toast('Máximo de 4 fotos');
+  $('#camPeca').textContent=edit.peca; $('#camPlaca').textContent=laudo.placa;
+  $('#camErr').classList.add('hidden'); $('#camTorch').classList.add('hidden'); $('#camTorch').classList.remove('on'); camTorch=false;
+  camAtualiza(); $('#cam').classList.add('open');
+  try{
+    if(!navigator.mediaDevices?.getUserMedia) throw new Error('sem suporte');
+    camStream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}});
+    const v=$('#camV'); v.srcObject=camStream; await v.play().catch(()=>{});
+    const tr=camStream.getVideoTracks()[0], cap=tr.getCapabilities?.()||{};
+    if(cap.torch) $('#camTorch').classList.remove('hidden');
+  }catch(e){
+    fecharCamera();
+    if(window.AndroidApp){ $('#fileIn').click(); return; } // versões antigas do app: câmera do celular (sem galeria)
+    $('#cam').classList.add('open');
+    $('#camErr').innerHTML='📷 <b>Não consegui abrir a câmera.</b><br>Permita o acesso à câmera para este site (ícone de cadeado ao lado do endereço) e tente de novo.';
+    $('#camErr').classList.remove('hidden');
+  }
+}
+function camAtualiza(){
+  $('#camN').textContent=`${edit.fotos.length}/4`;
+  $('#camTh').innerHTML=edit.fotos.slice(-3).map(f=>`<img src="${f}">`).join('');
+  $('#camShot').disabled=edit.fotos.length>=4;
+  $('#camHint').textContent=edit.fotos.length>=4?'Limite de 4 fotos atingido — toque em Concluir':'Enquadre a avaria dentro da moldura';
+}
+function fecharCamera(){
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  $('#camV').srcObject=null; $('#cam').classList.remove('open'); if(edit) renderFotos();
+}
+$('#camShot').onclick=()=>{
+  const v=$('#camV'); if(!camStream||!v.videoWidth||edit.fotos.length>=4) return;
+  edit.fotos.push(codificar(v,v.videoWidth,v.videoHeight));
+  const f=$('#camFlash'); f.classList.add('on'); setTimeout(()=>f.classList.remove('on'),60);
+  try{navigator.vibrate&&navigator.vibrate(30);}catch(e){}
+  camAtualiza();
+};
+$('#camTorch').onclick=async()=>{
+  try{camTorch=!camTorch; await camStream.getVideoTracks()[0].applyConstraints({advanced:[{torch:camTorch}]}); $('#camTorch').classList.toggle('on',camTorch);}catch(e){toast('Lanterna indisponível');}
+};
+$('#camX').onclick=fecharCamera; $('#camOk').onclick=fecharCamera;
 $('#sheetbg').onclick=fecharSheet; $('#shCancel').onclick=fecharSheet;
 $('#shSave').onclick=()=>{
   edit.desc=$('#shDesc').value.trim();
@@ -1042,6 +1149,7 @@ $('#ativaOk').onclick=()=>{const v=$('#ativaTxt').value.trim();const m=v.match(/
   localStorage.setItem('laudo_gh',t); toast('Ativado ✓'); setTimeout(()=>location.reload(),600);};
 /* Botão voltar do Android */
 window.voltarApp=()=>{
+  if($('#cam').classList.contains('open')){fecharCamera();return true;}
   if($('#sheet').classList.contains('open')){fecharSheet();return true;}
   if(!$('#app').classList.contains('hidden') && step>1 && step<4){irPara(step-1);return true;}
   return false;};

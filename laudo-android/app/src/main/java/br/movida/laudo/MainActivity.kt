@@ -3,7 +3,9 @@ package br.movida.laudo
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -14,6 +16,7 @@ import android.provider.MediaStore
 import android.speech.RecognizerIntent
 import android.util.Base64
 import android.webkit.JavascriptInterface
+import android.webkit.PermissionRequest
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -32,12 +35,16 @@ class MainActivity : Activity() {
         const val HOST = "aleff02.github.io"
         const val REQ_FOTO = 1
         const val REQ_VOZ = 2
+        const val REQ_CAM_WEB = 3
+        const val REQ_CAM_FOTO = 4
     }
 
     private lateinit var web: WebView
     private var fotoCallback: ValueCallback<Array<Uri>>? = null
     private var fotoCamera: File? = null
     private lateinit var atualizador: Atualizador
+    private var pedidoCamera: PermissionRequest? = null
+    private fun temCamera() = checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
     @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +59,7 @@ class MainActivity : Activity() {
             javaScriptCanOpenWindowsAutomatically = true
             setSupportMultipleWindows(false)
             allowFileAccess = false
+            mediaPlaybackRequiresUserGesture = false
             // sem internet: usa a última versão salva do app (os laudos ficam na fila do aparelho)
             cacheMode = if (online()) WebSettings.LOAD_DEFAULT else WebSettings.LOAD_CACHE_ELSE_NETWORK
             userAgentString = "$userAgentString LaudoAvariaApp/1.0"
@@ -76,8 +84,18 @@ class MainActivity : Activity() {
             ): Boolean {
                 fotoCallback?.onReceiveValue(null)
                 fotoCallback = callback
-                abrirSeletorDeFoto()
+                if (temCamera()) abrirSeletorDeFoto() else requestPermissions(arrayOf(Manifest.permission.CAMERA), REQ_CAM_FOTO)
                 return true
+            }
+
+            // câmera própria do app (getUserMedia na página): libera só a câmera, só para o nosso site
+            override fun onPermissionRequest(request: PermissionRequest) {
+                runOnUiThread {
+                    val querCamera = request.resources.contains(PermissionRequest.RESOURCE_VIDEO_CAPTURE)
+                    if (!querCamera || request.origin.host != HOST) { request.deny(); return@runOnUiThread }
+                    if (temCamera()) request.grant(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE))
+                    else { pedidoCamera = request; requestPermissions(arrayOf(Manifest.permission.CAMERA), REQ_CAM_WEB) }
+                }
             }
         }
 
@@ -85,6 +103,21 @@ class MainActivity : Activity() {
 
         atualizador = Atualizador(this)
         if (savedInstanceState == null && online()) atualizador.verificar()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val ok = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        when (requestCode) {
+            REQ_CAM_WEB -> {
+                pedidoCamera?.let { if (ok) it.grant(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE)) else it.deny() }
+                pedidoCamera = null
+                if (!ok) Toast.makeText(this, "Sem a câmera não dá para fotografar a avaria", Toast.LENGTH_LONG).show()
+            }
+            REQ_CAM_FOTO -> {
+                if (ok) abrirSeletorDeFoto() else { fotoCallback?.onReceiveValue(null); fotoCallback = null }
+            }
+        }
     }
 
     override fun onResume() {
@@ -107,16 +140,9 @@ class MainActivity : Activity() {
             putExtra(MediaStore.EXTRA_OUTPUT, uri)
             addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        val galeria = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-        val escolha = Intent.createChooser(galeria, "Foto da avaria").apply {
-            putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(camera))
-        }
+        // só câmera — galeria não é permitida
         try {
-            startActivityForResult(escolha, REQ_FOTO)
+            startActivityForResult(camera, REQ_FOTO)
         } catch (e: Exception) {
             fotoCallback?.onReceiveValue(null); fotoCallback = null
         }
@@ -129,10 +155,7 @@ class MainActivity : Activity() {
             REQ_FOTO -> {
                 var res: Array<Uri>? = null
                 if (resultCode == RESULT_OK) {
-                    val clip = data?.clipData
                     res = when {
-                        clip != null -> Array(clip.itemCount) { clip.getItemAt(it).uri }
-                        data?.data != null -> arrayOf(data.data!!)
                         fotoCamera?.let { it.exists() && it.length() > 0 } == true ->
                             arrayOf(FileProvider.getUriForFile(this, "br.movida.laudo.fotos", fotoCamera!!))
                         else -> null
