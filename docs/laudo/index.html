@@ -293,7 +293,7 @@ td a{color:var(--cyan)}
     <small style="color:var(--mut);display:block;margin-top:8px">Ao abrir o link, o celular do frota já fica conectado. Não poste em lugar público.</small>
   </div>
   <div class="card hidden" id="pLogin">
-    <label class="f">Chave do painel</label>
+    <label class="f">Token do GitHub ou chave do painel</label>
     <div class="row"><input id="pKey" type="password" placeholder="Chave definida no Apps Script"><button class="btn" id="pEnter" style="flex:0 0 120px">Entrar</button></div>
     <div class="err" id="pErr"></div>
   </div>
@@ -659,7 +659,10 @@ const linkFrotas=()=>location.origin+location.pathname+'#gh='+encodeURIComponent
 $('#pLink').onclick=()=>{if(!GH_ON)return toast('Salve o token primeiro');$('#pLinkTxt').value=linkFrotas();$('#pLinkBox').classList.toggle('hidden');};
 $('#pLinkCopy').onclick=()=>{navigator.clipboard.writeText(linkFrotas());toast('Link copiado ✓');};
 $('#pLinkWpp').onclick=()=>open('https://wa.me/?text='+encodeURIComponent('📋 *Laudo de Avaria* — registre aqui as avarias dos carros (placa, foto e motivo do reparo):\n'+linkFrotas()),'_blank');
-$('#pEnter').onclick=()=>carregar($('#pKey').value.trim());
+$('#pEnter').onclick=()=>{const v=$('#pKey').value.trim();
+  if(/^(github_pat_|ghp_)/.test(v)){localStorage.setItem('laudo_gh',v);location.reload();return;}
+  if(!API){$('#pErr').textContent='Cole aqui o token do GitHub (começa com github_pat_).';return;}
+  carregar(v);};
 $('#pRefresh').onclick=()=>GH_ON?carregarGH():carregar(sessionStorage.getItem('laudo_key'));
 let ghFiles={}; // id -> caminho do json
 async function carregarGH(){
