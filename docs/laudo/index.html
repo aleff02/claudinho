@@ -668,7 +668,8 @@ let ghFiles={}; // id -> caminho do json
 async function carregarGH(){
   try{
     toast('Buscando no GitHub…');
-    const tree=await gh(`git/trees/${GH.branch}?recursive=1`);
+    let tree; try{ tree=await gh(`git/trees/${GH.branch}?recursive=1`); }
+    catch(e){ if(/409|404/.test(e.message)) tree={tree:[]}; else throw e; }
     const arqs=tree.tree.filter(t=>t.type==='blob'&&/^laudos\/.+\.json$/.test(t.path));
     const laudos=[]; let i=0;
     await Promise.all(Array.from({length:6},async()=>{while(i<arqs.length){const a=arqs[i++];
