@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b14">
+<title>Laudo de Avaria · Frota</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
+<style>
+:root{
+  --bg:#070b14; --bg2:#0c1322; --glass:rgba(255,255,255,.045); --line:rgba(120,200,255,.16);
+  --cyan:#22e4ff; --orange:#ff7a1a; --green:#2bff9a; --yellow:#ffd23f; --red:#ff4d6d;
+  --txt:#e9f2ff; --mut:#8aa0bd; --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-serif;min-height:100%}
+body{background:
+  radial-gradient(900px 500px at 85% -10%,rgba(255,122,26,.18),transparent 60%),
+  radial-gradient(700px 500px at -10% 30%,rgba(34,228,255,.12),transparent 60%),
+  linear-gradient(180deg,#070b14,#060912);background-attachment:fixed}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;
+  background-image:linear-gradient(rgba(34,228,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(34,228,255,.06) 1px,transparent 1px);
+  background-size:36px 36px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%)}
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px 120px;position:relative}
+header{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px}
+.brand{display:flex;gap:10px;align-items:center}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--orange),#ff3d00);box-shadow:0 0 24px rgba(255,122,26,.5);font-weight:800}
+.brand h1{font-family:Orbitron;font-size:15px;letter-spacing:.12em;margin:0}
+.brand small{display:block;color:var(--mut);font-size:11px;letter-spacing:.08em}
+.iconbtn{background:var(--glass);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:8px 10px;font-size:13px;cursor:pointer}
+.progress{display:flex;gap:6px;margin-bottom:16px}
+.progress div{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;position:relative}
+.progress div.on:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--cyan),var(--orange));box-shadow:0 0 12px var(--cyan)}
+.steplbl{font-family:Orbitron;font-size:11px;letter-spacing:.2em;color:var(--cyan);margin:0 0 6px}
+h2{margin:0 0 14px;font-size:22px}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+label.f{display:block;font-size:12px;color:var(--mut);margin:12px 0 6px;letter-spacing:.04em;text-transform:uppercase}
+label.f:first-child{margin-top:0}
+input,select,textarea{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--txt);
+  border-radius:12px;padding:13px 14px;font:inherit;font-size:16px;outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,228,255,.15)}
+textarea{min-height:96px;resize:vertical}
+.row{display:flex;gap:10px}.row>*{flex:1}
+/* Placa Mercosul */
+.plate{background:#fff;border-radius:12px;overflow:hidden;border:3px solid #1b1b1b;box-shadow:0 0 0 1px #555,0 10px 40px rgba(34,228,255,.18);max-width:340px;margin:0 auto}
+.plate .band{background:#003399;color:#fff;font-size:10px;letter-spacing:.3em;text-align:center;padding:4px 0;font-weight:700;display:flex;justify-content:space-between;padding:4px 10px}
+.plate input{background:#fff;border:0;color:#111;text-align:center;font-family:Orbitron,monospace;font-weight:800;font-size:40px;
+  letter-spacing:.12em;padding:8px 6px 10px;border-radius:0;text-transform:uppercase}
+.plate input:focus{box-shadow:none}
+.platehint{text-align:center;font-size:12px;margin-top:8px;color:var(--mut);min-height:16px}
+.platehint.ok{color:var(--green)}.platehint.bad{color:var(--yellow)}
+/* Carro */
+.carbox{position:relative;display:flex;justify-content:center}
+svg.car{width:100%;max-width:300px;height:auto;filter:drop-shadow(0 0 18px rgba(34,228,255,.18))}
+.car .body{fill:#0d1729;stroke:rgba(34,228,255,.5);stroke-width:2}
+.car .zone{fill:rgba(34,228,255,.06);stroke:rgba(34,228,255,.55);stroke-width:1.4;cursor:pointer;transition:.18s}
+.car .zone.glass{fill:rgba(120,200,255,.14)}
+.car .zone.tire{fill:#1a1f2b;stroke:rgba(255,255,255,.35)}
+.car .zone.light{fill:rgba(255,210,63,.12);stroke:rgba(255,210,63,.6)}
+.car .zone:hover{fill:rgba(34,228,255,.22)}
+.car .zone.hit{fill:rgba(255,122,26,.45);stroke:var(--orange);stroke-width:2.2;filter:drop-shadow(0 0 6px var(--orange));animation:pulse 1.6s infinite}
+@keyframes pulse{50%{stroke-opacity:.4}}
+.car text{fill:var(--mut);font-size:10px;font-family:Orbitron;pointer-events:none}
+.scan{position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 14px var(--cyan);animation:scan 3.5s linear infinite;pointer-events:none;opacity:.7}
+@keyframes scan{0%{top:2%}100%{top:96%}}
+.tip{text-align:center;color:var(--mut);font-size:13px;margin:6px 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--txt);border-radius:999px;padding:9px 13px;font-size:14px;cursor:pointer;user-select:none;transition:.15s}
+.chip.on{border-color:var(--cyan);background:rgba(34,228,255,.16);box-shadow:0 0 12px rgba(34,228,255,.25)}
+.chip.big{border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:8px}
+.sev .chip.on[data-v="Leve"]{border-color:var(--green);background:rgba(43,255,154,.14);box-shadow:0 0 12px rgba(43,255,154,.25)}
+.sev .chip.on[data-v="Moderada"]{border-color:var(--yellow);background:rgba(255,210,63,.14);box-shadow:0 0 12px rgba(255,210,63,.25)}
+.sev .chip.on[data-v="Grave"]{border-color:var(--red);background:rgba(255,77,109,.16);box-shadow:0 0 12px rgba(255,77,109,.3)}
+/* Lista de avarias */
+.av{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;background:rgba(0,0,0,.2)}
+.av .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+.av b{display:block;font-size:15px}
+.av small{color:var(--mut);display:block;margin-top:2px;line-height:1.35}
+.av .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);margin-top:6px;color:var(--cyan)}
+.av .act{margin-left:auto;display:flex;gap:6px}
+.av .thumbs{display:flex;gap:4px;margin-top:6px}.av .thumbs img{width:38px;height:38px;object-fit:cover;border-radius:8px}
+.empty{text-align:center;color:var(--mut);padding:18px;border:1px dashed var(--line);border-radius:14px;font-size:14px}
+/* Botões */
+.btn{width:100%;border:0;border-radius:14px;padding:16px;font:600 16px Inter;cursor:pointer;color:#06101c;
+  background:linear-gradient(90deg,var(--cyan),#7af0ff);box-shadow:0 8px 30px rgba(34,228,255,.35);transition:.15s}
+.btn:active{transform:scale(.98)}
+.btn.orange{background:linear-gradient(90deg,var(--orange),#ffa24d);box-shadow:0 8px 30px rgba(255,122,26,.35)}
+.btn.ghost{background:var(--glass);color:var(--txt);border:1px solid var(--line);box-shadow:none}
+.btn:disabled{opacity:.4;pointer-events:none}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,transparent,rgba(7,11,20,.95) 30%);z-index:5}
+.bar .in{max-width:560px;margin:0 auto;display:flex;gap:10px}
+.bar .btn.ghost{flex:0 0 30%}
+/* Bottom sheet */
+.sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:.25s;z-index:10}
+.sheetbg.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:92vh;overflow:auto;background:linear-gradient(180deg,#0f1a2e,#0a1120);
+  border-top:1px solid var(--cyan);border-radius:24px 24px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(105%);transition:.3s cubic-bezier(.2,.9,.3,1);z-index:11;box-shadow:0 -10px 50px rgba(34,228,255,.2)}
+.sheet.open{transform:none}
+.sheet .grab{width:44px;height:5px;border-radius:5px;background:rgba(255,255,255,.2);margin:4px auto 12px}
+.sheet .in{max-width:560px;margin:0 auto}
+.sheet h3{margin:0;font-size:19px}
+.sheet .cat{font-size:12px;color:var(--orange);letter-spacing:.1em;text-transform:uppercase;font-family:Orbitron}
+.mic{position:absolute;right:10px;bottom:10px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(34,228,255,.12);color:var(--cyan);font-size:18px;cursor:pointer}
+.mic.rec{background:var(--red);color:#fff;animation:pulse 1s infinite;box-shadow:0 0 18px var(--red)}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.photos .ph{width:72px;height:72px;border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--line)}
+.photos .ph img{width:100%;height:100%;object-fit:cover}
+.photos .ph button{position:absolute;top:2px;right:2px;border:0;background:rgba(0,0,0,.7);color:#fff;border-radius:50%;width:22px;height:22px;cursor:pointer}
+.photos .add{width:72px;height:72px;border-radius:12px;border:1px dashed var(--cyan);display:grid;place-items:center;color:var(--cyan);font-size:26px;cursor:pointer}
+.err{color:var(--yellow);font-size:13px;margin-top:10px;min-height:16px}
+/* Sucesso */
+.done{text-align:center;padding:30px 10px}
+.ring{width:120px;height:120px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;font-size:52px;
+  border:2px solid var(--green);box-shadow:0 0 40px rgba(43,255,154,.45),inset 0 0 30px rgba(43,255,154,.2)}
+.proto{font-family:Orbitron;font-size:22px;letter-spacing:.1em;color:var(--cyan);margin:6px 0 18px}
+.banner{font-size:12px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,210,63,.35);background:rgba(255,210,63,.08);color:var(--yellow);margin-bottom:14px}
+.toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-120px);background:#0f1a2e;border:1px solid var(--cyan);padding:10px 16px;border-radius:12px;z-index:30;transition:.3s;font-size:14px;box-shadow:0 0 20px rgba(34,228,255,.3)}
+.toast.show{transform:translate(-50%,0)}
+.hidden{display:none!important}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#06101c;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* Painel */
+.wide{max-width:1200px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:12px}
+.kpi small{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.kpi b{display:block;font-family:Orbitron;font-size:24px;margin-top:4px}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:12px}
+.filters input,.filters select{padding:10px;font-size:14px}
+.tbl{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:1000px}
+th,td{padding:9px 10px;border-bottom:1px solid rgba(120,200,255,.08);text-align:left;vertical-align:top}
+th{position:sticky;top:0;background:#0d1626;color:var(--cyan);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+td select{padding:6px;font-size:12px;width:auto}
+td a{color:var(--cyan)}
+.pill{padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- ================= FORMULÁRIO ================= -->
+<div id="app" class="wrap">
+  <header>
+    <div class="brand"><div class="logo">⚡</div><div><h1>LAUDO DE AVARIA</h1><small>Frota · encaminhamento ao fornecedor</small></div></div>
+    <button class="iconbtn" id="btnFila" title="Laudos salvos no aparelho">📦 <span id="filaN">0</span></button>
+  </header>
+  <div class="banner hidden" id="localBanner">Modo local: os laudos ficam salvos neste aparelho. Exporte para Excel ou envie o resumo pelo WhatsApp.</div>
+  <div class="progress"><div class="on"></div><div></div><div></div></div>
+
+  <!-- Passo 1 -->
+  <section id="s1">
+    <p class="steplbl">PASSO 01</p>
+    <h2>Identifique o veículo</h2>
+    <div class="card">
+      <div class="plate"><div class="band"><span>MOVIDA</span><span>BRASIL</span><span>🇧🇷</span></div>
+        <input id="placa" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ABC1D23" inputmode="text"></div>
+      <div class="platehint" id="placaHint">Digite a placa</div>
+    </div>
+    <div class="card">
+      <label class="f">Loja</label>
+      <input id="loja" list="lojasList" placeholder="Comece a digitar o nome da loja">
+      <datalist id="lojasList"></datalist>
+      <div class="row">
+        <div><label class="f">KM atual</label><input id="km" inputmode="numeric" placeholder="Ex.: 45320"></div>
+        <div><label class="f">Seu nome</label><input id="resp" placeholder="Nome do frota"></div>
+      </div>
+      <label class="f">Contato (WhatsApp)</label>
+      <input id="contato" inputmode="tel" placeholder="(11) 9 9999-9999">
+    </div>
+  </section>
+
+  <!-- Passo 2 -->
+  <section id="s2" class="hidden">
+    <p class="steplbl">PASSO 02</p>
+    <h2>Onde está a avaria?</h2>
+    <div class="card">
+      <div class="tip">Toque na peça do carro · frente para cima</div>
+      <div class="carbox"><div class="scan"></div>
+      <svg class="car" viewBox="0 0 260 520" id="car">
+        <rect class="body" x="50" y="22" width="160" height="478" rx="62"/>
+        <rect class="zone tire" data-z="pneu_de" x="28" y="86" width="22" height="54" rx="7"/>
+        <rect class="zone tire" data-z="pneu_dd" x="210" y="86" width="22" height="54" rx="7"/>
+        <rect class="zone tire" data-z="pneu_te" x="28" y="392" width="22" height="54" rx="7"/>
+        <rect class="zone tire" data-z="pneu_td" x="210" y="392" width="22" height="54" rx="7"/>
+        <rect class="zone" data-z="pcd" x="62" y="26" width="136" height="22" rx="11"/>
+        <rect class="zone light" data-z="farol_e" x="58" y="52" width="36" height="15" rx="6"/>
+        <rect class="zone light" data-z="farol_d" x="166" y="52" width="36" height="15" rx="6"/>
+        <rect class="zone" data-z="paralama_de" x="53" y="72" width="17" height="80" rx="7"/>
+        <rect class="zone" data-z="paralama_dd" x="190" y="72" width="17" height="80" rx="7"/>
+        <rect class="zone" data-z="capo" x="74" y="72" width="112" height="80" rx="12"/>
+        <polygon class="zone glass" data-z="parabrisa" points="78,158 182,158 170,200 90,200"/>
+        <ellipse class="zone" data-z="retro_e" cx="38" cy="188" rx="13" ry="8"/>
+        <ellipse class="zone" data-z="retro_d" cx="222" cy="188" rx="13" ry="8"/>
+        <rect class="zone" data-z="porta_de" x="53" y="206" width="22" height="86" rx="6"/>
+        <rect class="zone" data-z="porta_dd" x="185" y="206" width="22" height="86" rx="6"/>
+        <rect class="zone" data-z="porta_te" x="53" y="296" width="22" height="86" rx="6"/>
+        <rect class="zone" data-z="porta_td" x="185" y="296" width="22" height="86" rx="6"/>
+        <rect class="zone" data-z="teto" x="82" y="206" width="96" height="148" rx="14"/>
+        <polygon class="zone glass" data-z="vigia" points="90,360 170,360 180,392 80,392"/>
+        <rect class="zone" data-z="paralama_te" x="53" y="386" width="17" height="68" rx="7"/>
+        <rect class="zone" data-z="paralama_td" x="190" y="386" width="17" height="68" rx="7"/>
+        <rect class="zone" data-z="tampa" x="74" y="398" width="112" height="56" rx="12"/>
+        <rect class="zone light" data-z="lanterna_e" x="58" y="458" width="36" height="14" rx="6"/>
+        <rect class="zone light" data-z="lanterna_d" x="166" y="458" width="36" height="14" rx="6"/>
+        <rect class="zone" data-z="pct" x="62" y="476" width="136" height="20" rx="10"/>
+        <text x="8" y="270">E</text><text x="244" y="270">D</text><text x="114" y="14">FRENTE</text>
+      </svg></div>
+      <div class="tip" style="margin-top:14px">Não é na lataria? Escolha abaixo:</div>
+      <div class="chips" id="extras"></div>
+    </div>
+    <p class="steplbl" style="margin-top:6px">AVARIAS REGISTRADAS</p>
+    <div id="lista"></div>
+  </section>
+
+  <!-- Passo 3 -->
+  <section id="s3" class="hidden">
+    <p class="steplbl">PASSO 03</p>
+    <h2>Revise e envie</h2>
+    <div class="card" id="resumo"></div>
+    <div class="card">
+      <label class="f">Observação geral (opcional)</label>
+      <textarea id="obs" placeholder="Ex.: carro parado no pátio, cliente relatou na devolução..."></textarea>
+    </div>
+    <div class="err" id="sendErr"></div>
+  </section>
+
+  <!-- Sucesso -->
+  <section id="s4" class="hidden">
+    <div class="done">
+      <div class="ring">✓</div>
+      <h2>Laudo registrado</h2>
+      <div class="proto" id="protoTxt"></div>
+      <p style="color:var(--mut);font-size:14px" id="doneMsg"></p>
+      <button class="btn orange" id="btnWpp" style="margin-top:10px">Enviar resumo no WhatsApp</button>
+      <button class="btn ghost" id="btnCopy" style="margin-top:10px">Copiar resumo</button>
+      <button class="btn" id="btnNovo" style="margin-top:10px">Novo laudo</button>
+    </div>
+  </section>
+</div>
+
+<div class="bar" id="bar"><div class="in">
+  <button class="btn ghost hidden" id="btnBack">Voltar</button>
+  <button class="btn" id="btnNext">Continuar</button>
+</div></div>
+
+<!-- Sheet de avaria -->
+<div class="sheetbg" id="sheetbg"></div>
+<div class="sheet" id="sheet"><div class="in">
+  <div class="grab"></div>
+  <div class="cat" id="shCat"></div>
+  <h3 id="shTitle"></h3>
+  <label class="f">O que aconteceu?</label>
+  <div class="chips" id="shTipos"></div>
+  <label class="f">Gravidade</label>
+  <div class="chips sev" id="shSev">
+    <div class="chip" data-v="Leve">🟢 Leve</div><div class="chip" data-v="Moderada">🟡 Moderada</div><div class="chip" data-v="Grave">🔴 Grave</div>
+  </div>
+  <label class="f">Por que precisa de reparo?</label>
+  <div class="chips" id="shMot"></div>
+  <label class="f">Descreva (toque no 🎙 para ditar)</label>
+  <div style="position:relative"><textarea id="shDesc" placeholder="Ex.: pneu dianteiro esquerdo com bolha na lateral, cliente relatou que bateu na guia"></textarea>
+    <button class="mic" id="mic" type="button">🎙</button></div>
+  <label class="f">Fotos (até 4)</label>
+  <div class="photos" id="shPhotos"></div>
+  <input type="file" id="fileIn" accept="image/*" capture="environment" class="hidden" multiple>
+  <div class="err" id="shErr"></div>
+  <div class="row" style="margin-top:12px">
+    <button class="btn ghost" id="shCancel">Cancelar</button>
+    <button class="btn orange" id="shSave">Salvar avaria</button>
+  </div>
+</div></div>
+
+<!-- ================= PAINEL (gestão) ================= -->
+<div id="painel" class="wrap wide hidden">
+  <header>
+    <div class="brand"><div class="logo">⚡</div><div><h1>PAINEL DE AVARIAS</h1><small>Consolidação para fornecedores</small></div></div>
+    <div style="display:flex;gap:8px"><button class="iconbtn" id="pRefresh">⟳ Atualizar</button><button class="iconbtn" id="pExport">⬇ Excel</button></div>
+  </header>
+  <div class="card hidden" id="pLogin">
+    <label class="f">Chave do painel</label>
+    <div class="row"><input id="pKey" type="password" placeholder="Chave definida no Apps Script"><button class="btn" id="pEnter" style="flex:0 0 120px">Entrar</button></div>
+    <div class="err" id="pErr"></div>
+  </div>
+  <div id="pBody" class="hidden">
+    <div class="kpis" id="pKpis"></div>
+    <div class="filters">
+      <input id="fBusca" placeholder="Buscar placa, loja, descrição...">
+      <select id="fForn"><option value="">Todos os fornecedores</option></select>
+      <select id="fStatus"><option value="">Todos os status</option></select>
+      <select id="fReg"><option value="">Todas as regionais</option></select>
+      <select id="fSev"><option value="">Toda gravidade</option><option>Grave</option><option>Moderada</option><option>Leve</option></select>
+    </div>
+    <div class="tbl"><table><thead><tr>
+      <th>Data</th><th>Placa</th><th>Loja</th><th>Fornecedor</th><th>Peça</th><th>Dano</th><th>Grav.</th><th>Motivo</th><th>Descrição</th><th>Fotos</th><th>Frota</th><th>Status</th>
+    </tr></thead><tbody id="pRows"></tbody></table></div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — cole aqui a URL do Apps Script publicado (ver README)
+   ===================================================================== */
+const CONFIG = {
+  API_URL: '',               // ex.: 'https://script.google.com/macros/s/XXXX/exec'
+  WHATSAPP_DESTINO: ''       // opcional: número que recebe os resumos, ex.: '5511999999999'
+};
+const API = localStorage.getItem('laudo_api') || CONFIG.API_URL;
+
+/* ---------------- Dados de apoio ---------------- */
+const REGIONAIS = {
+ 'RAC_SP_CAPITAL':['Santos - Assaí Ana Costa','Santos Affonso Penna','São Bernardo Plaza Shopping','Diadema - Shopping Praça da Moça','São Bernardo do Campo - Assai Anchieta','Santo André','São Caetano do Sul','SP - Assaí João Dias','SP - Bela Vista','SP - Butantã Corifeu','SP - Consolação','SP - Nações Unidas','SP - Shopping Butantã','SP - Shopping Eldorado','SP - Shopping Santa Cruz','SP - Vila Leopoldina','SP - Congonhas - Estacionamento do Aeroporto','SP - Itaim Bibi Brascan','SP - Juscelino Kubitschek','SP - Saúde','SP - Shopping DeD - Brooklin','SP - Shopping Frei Caneca','SP - Shopping Patio Paulista','SP - Washington Luiz'],
+ 'RAC_SP_ZL_VP':['SP - Avenida Aricanduva','SP - Cruzeiro do Sul','SP - Rodoviária Tietê','SP - Shopping Aricanduva','SP - Shopping Tucuruvi','SP - Barra Funda','Guaratinguetá','Jacareí','Mogi das Cruzes','São José dos Campos - Aquarius','SP - Guarulhos Aeroporto','SP - Guarulhos Timóteo Penteado','SP - Penha','SP - Tatuapé - Marginal Tietê','Shopping Metrô Tatuapé','Suzano','Taubaté'],
+ 'INTERIOR 1':['Uberaba Aeroporto','Uberaba São Benedito','Uberlândia Aeroporto','Franca','Ribeirão Preto Aeroporto','Ribeirão Preto Castelo Branco','Araraquara','São Carlos'],
+ 'INTERIOR 2':['Araçatuba','Bauru','Marília','Presidente Prudente','São José do Rio Preto Aeroporto','São José do Rio Preto Anisio Haddad'],
+ 'RAC_SP_CAMPINAS':['Barueri Alphaville - Tambore','Barueri - Shopping Iguatemi','Cotia Granja Vianna Shopping','Osasco','Rio Claro','Sorocaba - Assaí Santa Rosália','Sorocaba Campolim','Sorocaba Vera Cruz','Americana','Campinas - Shopping Parque Dom Pedro','Campinas Aeroporto','Campinas Moraes Sales','Campinas Orosimbo','Indaiatuba','Jundiaí','Jundiaí Cica','Limeira','Piracicaba']
+};
+const LOJA2REG = {}; Object.entries(REGIONAIS).forEach(([r,ls])=>ls.forEach(l=>LOJA2REG[l]=r));
+
+const TIPOS = {
+  'Pneus':['Furado','Cortado / rasgado','Bolha','Desgaste / careca','Roda amassada ou trincada','Calota faltando'],
+  'Vidros':['Trinca','Pedrada / estrela','Quebrado','Riscado','Borracha / vedação solta'],
+  'Funilaria e Pintura':['Amassado','Riscado','Ralado','Quebrado / trincado','Peça solta ou faltando','Pintura descascada'],
+  'Retrovisor':['Quebrado','Espelho trincado','Capa danificada','Não regula','Faltando'],
+  'Iluminação':['Quebrado','Trincado','Queimado','Embaçado / infiltração','Faltando'],
+  'Mecânica':['Barulho anormal','Vazamento','Freio','Suspensão','Luz de motor no painel','Câmbio / embreagem','Ar-condicionado','Superaquecimento'],
+  'Elétrica':['Bateria','Luz de alerta no painel','Vidro elétrico','Trava / alarme','Multimídia / som','Chave / controle'],
+  'Interior':['Banco rasgado / manchado','Forro danificado','Painel riscado/quebrado','Tapete faltando','Odor / sujeira pesada','Cinto de segurança'],
+  'Acessórios':['Estepe faltando/danificado','Macaco / chave de roda faltando','Triângulo faltando','Documento faltando'],
+  'Outros':['Outro']
+};
+// categoria -> fornecedor
+const FORN = {'Pneus':'Pneus','Vidros':'Vidros','Funilaria e Pintura':'Funilaria e Pintura','Retrovisor':'Funilaria e Pintura','Iluminação':'Iluminação (faróis/lanternas)','Mecânica':'Mecânica','Elétrica':'Elétrica','Interior':'Tapeçaria / Interior','Acessórios':'Acessórios','Outros':'Outros'};
+const COR = {'Pneus':'#b388ff','Vidros':'#22e4ff','Funilaria e Pintura':'#ff7a1a','Retrovisor':'#ff7a1a','Iluminação':'#ffd23f','Mecânica':'#ff4d6d','Elétrica':'#2bff9a','Interior':'#ff8fd1','Acessórios':'#9fb3ff','Outros':'#8aa0bd'};
+
+const ZONAS = {
+  pneu_de:['Pneu dianteiro esquerdo','Pneus'], pneu_dd:['Pneu dianteiro direito','Pneus'],
+  pneu_te:['Pneu traseiro esquerdo','Pneus'],  pneu_td:['Pneu traseiro direito','Pneus'],
+  pcd:['Para-choque dianteiro','Funilaria e Pintura'], pct:['Para-choque traseiro','Funilaria e Pintura'],
+  farol_e:['Farol esquerdo','Iluminação'], farol_d:['Farol direito','Iluminação'],
+  lanterna_e:['Lanterna esquerda','Iluminação'], lanterna_d:['Lanterna direita','Iluminação'],
+  capo:['Capô','Funilaria e Pintura'], teto:['Teto','Funilaria e Pintura'], tampa:['Tampa traseira / porta-malas','Funilaria e Pintura'],
+  parabrisa:['Para-brisa','Vidros'], vigia:['Vidro traseiro (vigia)','Vidros'],
+  retro_e:['Retrovisor esquerdo','Retrovisor'], retro_d:['Retrovisor direito','Retrovisor'],
+  porta_de:['Porta dianteira esquerda','Funilaria e Pintura'], porta_dd:['Porta dianteira direita','Funilaria e Pintura'],
+  porta_te:['Porta traseira esquerda','Funilaria e Pintura'], porta_td:['Porta traseira direita','Funilaria e Pintura'],
+  paralama_de:['Para-lama dianteiro esquerdo','Funilaria e Pintura'], paralama_dd:['Para-lama dianteiro direito','Funilaria e Pintura'],
+  paralama_te:['Lateral traseira esquerda','Funilaria e Pintura'], paralama_td:['Lateral traseira direita','Funilaria e Pintura']
+};
+const PORTA_EXTRA = 'Vidro lateral danificado'; // em portas, vai para Vidros
+const EXTRAS = [['🔧','Mecânica'],['⚡','Elétrica'],['💺','Interior'],['🧰','Acessórios'],['🛞','Estepe','Pneus'],['➕','Outros']];
+const MOTIVOS = ['Risco à segurança','Impede a locação','Reprovado no checklist','Avaria de cliente (cobrança)','Desgaste natural','Estética / imagem','Exigência legal'];
+
+/* ---------------- Estado ---------------- */
+let step = 1;
+let laudo = novoLaudo();
+let edit = null; // avaria em edição
+function novoLaudo(){ return {placa:'',loja:'',km:'',resp:localStorage.getItem('laudo_resp')||'',contato:localStorage.getItem('laudo_contato')||'',obs:'',avarias:[]}; }
+
+const $ = s=>document.querySelector(s);
+const el = (t,a={},h='')=>{const e=document.createElement(t);Object.assign(e,a);if(h)e.innerHTML=h;return e;};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+const esc = s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------------- Passo 1 ---------------- */
+Object.keys(LOJA2REG).sort().forEach(l=>$('#lojasList').append(el('option',{value:l})));
+const placaRe = /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/;
+$('#placa').addEventListener('input',e=>{
+  let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7);
+  e.target.value=v; laudo.placa=v;
+  const h=$('#placaHint');
+  if(!v){h.textContent='Digite a placa';h.className='platehint';}
+  else if(placaRe.test(v)){h.textContent='✓ Placa válida';h.className='platehint ok';}
+  else {h.textContent=v.length<7?'Continue digitando…':'Formato esperado: ABC1D23 ou ABC1234';h.className='platehint bad';}
+});
+['loja','km','resp','contato'].forEach(id=>{const i=$('#'+id);i.value=laudo[id];i.addEventListener('input',()=>laudo[id]=i.value.trim());});
+$('#km').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');laudo.km=e.target.value;});
+
+/* ---------------- Passo 2 ---------------- */
+document.querySelectorAll('#car .zone').forEach(z=>z.addEventListener('click',()=>{
+  const [nome,cat]=ZONAS[z.dataset.z]; abrirSheet({zona:z.dataset.z,peca:nome,cat});
+}));
+EXTRAS.forEach(([ic,nome,cat])=>{
+  const c=el('div',{className:'chip big'},`<span>${ic}</span>${nome}`);
+  c.onclick=()=>abrirSheet({zona:'extra',peca:nome==='Estepe'?'Estepe':nome,cat:cat||nome});
+  $('#extras').append(c);
+});
+
+function renderLista(){
+  const box=$('#lista'); box.innerHTML='';
+  if(!laudo.avarias.length){box.append(el('div',{className:'empty'},'Nenhuma avaria ainda. Toque numa peça do carro ☝️'));}
+  laudo.avarias.forEach((a,i)=>{
+    const d=el('div',{className:'av'});
+    d.innerHTML=`<span class="dot" style="background:${COR[a.cat]};box-shadow:0 0 8px ${COR[a.cat]}"></span>
+      <div style="flex:1;min-width:0"><b>${esc(a.peca)} · ${esc(a.tipo)}</b>
+      <small>${esc(a.sev)} · ${esc(a.motivos.join(', '))}</small>
+      ${a.desc?`<small>${esc(a.desc)}</small>`:''}
+      <span class="tag">→ ${esc(a.fornecedor)}</span>
+      ${a.fotos.length?`<div class="thumbs">${a.fotos.map(f=>`<img src="${f}">`).join('')}</div>`:''}</div>
+      <div class="act"><button class="iconbtn" data-e="${i}">✎</button><button class="iconbtn" data-d="${i}">🗑</button></div>`;
+    box.append(d);
+  });
+  box.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>abrirSheet(laudo.avarias[+b.dataset.e],+b.dataset.e));
+  box.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{laudo.avarias.splice(+b.dataset.d,1);renderLista();marcarCarro();});
+  marcarCarro();
+}
+function marcarCarro(){
+  document.querySelectorAll('#car .zone').forEach(z=>z.classList.toggle('hit',laudo.avarias.some(a=>a.zona===z.dataset.z)));
+}
+
+/* ---------------- Sheet ---------------- */
+function abrirSheet(base,idx=null){
+  edit = {zona:base.zona,peca:base.peca,cat:base.cat,tipo:base.tipo||'',sev:base.sev||'',motivos:[...(base.motivos||[])],desc:base.desc||'',fotos:[...(base.fotos||[])],idx};
+  $('#shCat').textContent=base.cat; $('#shTitle').textContent=base.peca; $('#shErr').textContent='';
+  let tipos=[...TIPOS[base.cat]];
+  if(base.zona.startsWith('porta_')) tipos.push(PORTA_EXTRA);
+  if(base.peca==='Estepe') tipos=['Furado','Cortado / rasgado','Faltando','Roda danificada'];
+  chipGroup('#shTipos',tipos,edit.tipo,false,v=>edit.tipo=v);
+  chipGroup('#shMot',MOTIVOS,edit.motivos,true,v=>edit.motivos=v);
+  document.querySelectorAll('#shSev .chip').forEach(c=>{c.classList.toggle('on',c.dataset.v===edit.sev);c.onclick=()=>{edit.sev=c.dataset.v;document.querySelectorAll('#shSev .chip').forEach(x=>x.classList.toggle('on',x===c));};});
+  $('#shDesc').value=edit.desc; renderFotos();
+  $('#sheet').classList.add('open'); $('#sheetbg').classList.add('open');
+}
+function fecharSheet(){ $('#sheet').classList.remove('open'); $('#sheetbg').classList.remove('open'); pararMic(); }
+function chipGroup(sel,opts,val,multi,cb){
+  const box=$(sel); box.innerHTML='';
+  opts.forEach(o=>{
+    const c=el('div',{className:'chip'+((multi?val.includes(o):val===o)?' on':'')},esc(o));
+    c.onclick=()=>{
+      if(multi){c.classList.toggle('on');cb([...box.querySelectorAll('.chip.on')].map(x=>x.textContent));}
+      else{box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));cb(o);}
+    };
+    box.append(c);
+  });
+}
+function renderFotos(){
+  const box=$('#shPhotos'); box.innerHTML='';
+  edit.fotos.forEach((f,i)=>{const p=el('div',{className:'ph'},`<img src="${f}"><button>×</button>`);p.querySelector('button').onclick=()=>{edit.fotos.splice(i,1);renderFotos();};box.append(p);});
+  if(edit.fotos.length<4){const a=el('div',{className:'add'},'📷');a.onclick=()=>$('#fileIn').click();box.append(a);}
+}
+$('#fileIn').addEventListener('change',async e=>{
+  for(const f of [...e.target.files].slice(0,4-edit.fotos.length)) edit.fotos.push(await comprimir(f));
+  e.target.value=''; renderFotos();
+});
+function comprimir(file,max=1280,q=.72){
+  return new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{
+    const s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');
+    c.width=img.width*s;c.height=img.height*s;c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q));};img.src=r.result;};r.readAsDataURL(file);});
+}
+$('#sheetbg').onclick=fecharSheet; $('#shCancel').onclick=fecharSheet;
+$('#shSave').onclick=()=>{
+  edit.desc=$('#shDesc').value.trim();
+  if(!edit.tipo) return $('#shErr').textContent='Escolha o que aconteceu.';
+  if(!edit.sev) return $('#shErr').textContent='Escolha a gravidade.';
+  if(!edit.motivos.length) return $('#shErr').textContent='Diga por que precisa de reparo.';
+  if(edit.desc.length<5) return $('#shErr').textContent='Escreva uma descrição curta (ou dite pelo 🎙).';
+  const cat = edit.tipo===PORTA_EXTRA?'Vidros':edit.cat;
+  const a={zona:edit.zona,peca:edit.peca,cat,tipo:edit.tipo,sev:edit.sev,motivos:edit.motivos,desc:edit.desc,fotos:edit.fotos,fornecedor:FORN[cat]};
+  if(edit.idx!==null) laudo.avarias[edit.idx]=a; else laudo.avarias.push(a);
+  fecharSheet(); renderLista(); toast('Avaria salva ✓');
+};
+
+/* Ditado por voz */
+let rec=null;
+const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR) $('#mic').classList.add('hidden');
+$('#mic').onclick=()=>{
+  if(rec){pararMic();return;}
+  rec=new SR(); rec.lang='pt-BR'; rec.continuous=true; rec.interimResults=false;
+  const base=$('#shDesc').value;
+  let txt='';
+  rec.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++) if(e.results[i].isFinal) txt+=e.results[i][0].transcript+' ';
+    $('#shDesc').value=(base?base+' ':'')+txt.trim();};
+  rec.onend=()=>pararMic();
+  rec.start(); $('#mic').classList.add('rec');
+};
+function pararMic(){ if(rec){try{rec.stop();}catch(e){} rec=null;} $('#mic').classList.remove('rec'); }
+
+/* ---------------- Passo 3 ---------------- */
+function renderResumo(){
+  const reg=LOJA2REG[laudo.loja]||'—';
+  const porForn={}; laudo.avarias.forEach(a=>(porForn[a.fornecedor]=porForn[a.fornecedor]||[]).push(a));
+  $('#resumo').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <div><div style="font-family:Orbitron;font-size:26px;letter-spacing:.1em">${esc(laudo.placa)}</div>
+      <small style="color:var(--mut)">${esc(laudo.loja)} · ${esc(reg)}${laudo.km?' · '+esc(laudo.km)+' km':''}</small></div>
+      <div style="text-align:right"><b style="font-family:Orbitron;font-size:24px;color:var(--orange)">${laudo.avarias.length}</b><br><small style="color:var(--mut)">avaria(s)</small></div>
+    </div>
+    ${Object.entries(porForn).map(([f,as])=>`<p class="steplbl" style="margin:16px 0 8px">→ ${esc(f.toUpperCase())}</p>`+
+      as.map(a=>`<div class="av" style="margin-bottom:6px"><span class="dot" style="background:${COR[a.cat]}"></span><div><b>${esc(a.peca)} · ${esc(a.tipo)}</b><small>${esc(a.sev)} · ${esc(a.motivos.join(', '))}</small><small>${esc(a.desc)}</small></div></div>`).join('')).join('')}
+    <small style="color:var(--mut);display:block;margin-top:10px">Responsável: ${esc(laudo.resp)}${laudo.contato?' · '+esc(laudo.contato):''}</small>`;
+}
+
+/* ---------------- Navegação ---------------- */
+function irPara(n){
+  step=n;
+  ['s1','s2','s3','s4'].forEach((s,i)=>$('#'+s).classList.toggle('hidden',i+1!==n));
+  document.querySelectorAll('.progress div').forEach((d,i)=>d.classList.toggle('on',i<Math.min(n,3)));
+  $('#btnBack').classList.toggle('hidden',n===1||n===4);
+  $('#bar').classList.toggle('hidden',n===4);
+  $('#btnNext').textContent=n===3?'Enviar laudo 🚀':'Continuar';
+  $('#btnNext').className='btn'+(n===3?' orange':'');
+  if(n===2) renderLista();
+  if(n===3) renderResumo();
+  scrollTo({top:0,behavior:'smooth'});
+}
+$('#btnBack').onclick=()=>irPara(step-1);
+$('#btnNext').onclick=()=>{
+  if(step===1){
+    if(!placaRe.test(laudo.placa)) return toast('Confira a placa');
+    if(!laudo.loja) return toast('Informe a loja');
+    if(!laudo.resp) return toast('Informe seu nome');
+    localStorage.setItem('laudo_resp',laudo.resp); localStorage.setItem('laudo_contato',laudo.contato);
+    return irPara(2);
+  }
+  if(step===2){ if(!laudo.avarias.length) return toast('Registre pelo menos uma avaria'); return irPara(3); }
+  if(step===3) enviar();
+};
+
+function protocolo(){const d=new Date();const p=n=>String(n).padStart(2,'0');
+  return `LA-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;}
+
+let ultimo=null;
+async function enviar(){
+  laudo.obs=$('#obs').value.trim();
+  const payload={action:'laudo',protocolo:protocolo(),dataHora:new Date().toISOString(),placa:laudo.placa,loja:laudo.loja,
+    regional:LOJA2REG[laudo.loja]||'',km:laudo.km,responsavel:laudo.resp,contato:laudo.contato,obs:laudo.obs,
+    avarias:laudo.avarias.map(a=>({peca:a.peca,categoria:a.cat,fornecedor:a.fornecedor,tipo:a.tipo,severidade:a.sev,motivo:a.motivos.join(', '),descricao:a.desc,fotos:a.fotos}))};
+  const b=$('#btnNext'); b.disabled=true; b.innerHTML='<span class="spin"></span>Enviando…'; $('#sendErr').textContent='';
+  let online=false;
+  if(API){
+    try{
+      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+      const j=await r.json(); if(!j.ok) throw new Error(j.error||'Falha'); online=true;
+    }catch(e){ $('#sendErr').textContent='Sem conexão com a base agora — o laudo ficou salvo no aparelho e pode ser reenviado depois.'; }
+  }
+  if(!online) salvarLocal(payload);
+  ultimo=payload; b.disabled=false;
+  $('#protoTxt').textContent=payload.protocolo;
+  $('#doneMsg').textContent=online?'Enviado para a base central. A equipe vai encaminhar ao fornecedor.':'Salvo neste aparelho (📦 no topo). Exporte o Excel ou mande o resumo.';
+  irPara(4);
+}
+
+/* Fila local */
+function fila(){try{return JSON.parse(localStorage.getItem('laudo_fila')||'[]');}catch(e){return[];}}
+function salvarLocal(p){const f=fila();f.push(p);try{localStorage.setItem('laudo_fila',JSON.stringify(f));}catch(e){
+  // sem espaço: guarda sem fotos
+  p.avarias.forEach(a=>a.fotos=[]);f[f.length-1]=p;localStorage.setItem('laudo_fila',JSON.stringify(f));toast('Fotos não couberam no aparelho');}
+  atualizaFila();}
+function atualizaFila(){$('#filaN').textContent=fila().length;}
+$('#btnFila').onclick=async()=>{
+  const f=fila(); if(!f.length) return toast('Nenhum laudo pendente no aparelho');
+  if(API && confirm(`Reenviar ${f.length} laudo(s) para a base central?`)){
+    const rest=[];
+    for(const p of f){try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)});const j=await r.json();if(!j.ok)throw 0;}catch(e){rest.push(p);}}
+    localStorage.setItem('laudo_fila',JSON.stringify(rest)); atualizaFila();
+    return toast(rest.length?`${rest.length} ainda pendente(s)`:'Todos enviados ✓');
+  }
+  exportarExcel(linhasDe(f),'laudos-avaria-aparelho');
+  if(confirm('Excel baixado. Limpar os laudos salvos no aparelho?')){localStorage.removeItem('laudo_fila');atualizaFila();}
+};
+function linhasDe(laudos){
+  const out=[]; laudos.forEach(p=>p.avarias.forEach((a,i)=>out.push({
+    'Protocolo':p.protocolo,'Data/Hora':new Date(p.dataHora).toLocaleString('pt-BR'),'Placa':p.placa,'Loja':p.loja,'Regional':p.regional,'KM':p.km,
+    'Fornecedor':a.fornecedor,'Categoria':a.categoria,'Peça/Local':a.peca,'Tipo de dano':a.tipo,'Gravidade':a.severidade,'Motivo do reparo':a.motivo,
+    'Descrição':a.descricao,'Fotos':(a.fotos||[]).length,'Responsável':p.responsavel,'Contato':p.contato,'Obs. geral':p.obs,'Status':'Pendente'})));
+  return out;
+}
+function exportarExcel(rows,nome){
+  if(!window.XLSX) return toast('Biblioteca do Excel ainda carregando…');
+  const wb=XLSX.utils.book_new();
+  const add=(nm,rs)=>{const ws=XLSX.utils.json_to_sheet(rs);ws['!cols']=Object.keys(rs[0]||{}).map(k=>({wch:Math.min(45,Math.max(10,k.length+2,...rs.map(r=>String(r[k]??'').length)))}));ws['!autofilter']={ref:ws['!ref']};XLSX.utils.book_append_sheet(wb,ws,nm.slice(0,31).replace(/[\\/?*\[\]:]/g,'-'));};
+  add('Todas',rows);
+  [...new Set(rows.map(r=>r['Fornecedor']))].sort().forEach(f=>add(f,rows.filter(r=>r['Fornecedor']===f)));
+  XLSX.writeFile(wb,`${nome}-${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+/* Resumo WhatsApp */
+function textoResumo(p){
+  let t=`*LAUDO DE AVARIA* ${p.protocolo}\n🚗 *${p.placa}* · ${p.loja}${p.km?' · '+p.km+' km':''}\n👤 ${p.responsavel}${p.contato?' ('+p.contato+')':''}\n`;
+  const g={}; p.avarias.forEach(a=>(g[a.fornecedor]=g[a.fornecedor]||[]).push(a));
+  Object.entries(g).forEach(([f,as])=>{t+=`\n*→ ${f}*\n`;as.forEach(a=>t+=`• ${a.peca}: ${a.tipo} (${a.severidade})\n  Motivo: ${a.motivo}\n  ${a.descricao}\n`);});
+  if(p.obs) t+=`\nObs.: ${p.obs}`; return t;
+}
+$('#btnWpp').onclick=()=>open(`https://wa.me/${CONFIG.WHATSAPP_DESTINO}?text=${encodeURIComponent(textoResumo(ultimo))}`,'_blank');
+$('#btnCopy').onclick=()=>{navigator.clipboard.writeText(textoResumo(ultimo));toast('Resumo copiado ✓');};
+$('#btnNovo').onclick=()=>{const keep={resp:laudo.resp,contato:laudo.contato,loja:laudo.loja};laudo=novoLaudo();Object.assign(laudo,keep);
+  $('#placa').value='';$('#placa').dispatchEvent(new Event('input'));$('#km').value='';$('#obs').value='';irPara(1);};
+
+/* =================== PAINEL =================== */
+const STATUS=['Pendente','Enviado ao fornecedor','Em reparo','Concluído','Recusado'];
+const STCOR={'Pendente':'#ffd23f','Enviado ao fornecedor':'#22e4ff','Em reparo':'#b388ff','Concluído':'#2bff9a','Recusado':'#ff4d6d'};
+let pData=[];
+function initPainel(){
+  $('#app').classList.add('hidden');$('#bar').classList.add('hidden');$('#painel').classList.remove('hidden');$('#localBanner').classList.add('hidden');
+  if(!API){$('#pLogin').classList.remove('hidden');$('#pErr').textContent='Configure a URL do Apps Script no index.html (CONFIG.API_URL) para usar o painel.';return;}
+  const k=sessionStorage.getItem('laudo_key'); if(k){carregar(k);} else $('#pLogin').classList.remove('hidden');
+}
+$('#pEnter').onclick=()=>carregar($('#pKey').value.trim());
+$('#pRefresh').onclick=()=>carregar(sessionStorage.getItem('laudo_key'));
+async function carregar(key){
+  if(!key) return;
+  try{
+    const r=await fetch(`${API}?action=list&key=${encodeURIComponent(key)}`); const j=await r.json();
+    if(!j.ok) throw new Error(j.error||'Chave inválida');
+    sessionStorage.setItem('laudo_key',key); pData=j.rows;
+    $('#pLogin').classList.add('hidden'); $('#pBody').classList.remove('hidden');
+    preencherFiltros(); renderPainel(); toast(`${pData.length} avaria(s) carregadas`);
+  }catch(e){$('#pLogin').classList.remove('hidden');$('#pErr').textContent=e.message;}
+}
+function preencherFiltros(){
+  const fill=(sel,vals,lbl)=>{const s=$(sel),cur=s.value;s.innerHTML=`<option value="">${lbl}</option>`+[...new Set(vals)].filter(Boolean).sort().map(v=>`<option>${esc(v)}</option>`).join('');s.value=cur;};
+  fill('#fForn',pData.map(r=>r['Fornecedor']),'Todos os fornecedores');
+  fill('#fStatus',STATUS,'Todos os status');
+  fill('#fReg',pData.map(r=>r['Regional']),'Todas as regionais');
+}
+['#fBusca','#fForn','#fStatus','#fReg','#fSev'].forEach(s=>$(s).addEventListener('input',renderPainel));
+function filtrados(){
+  const q=$('#fBusca').value.toLowerCase(),f=$('#fForn').value,st=$('#fStatus').value,rg=$('#fReg').value,sv=$('#fSev').value;
+  return pData.filter(r=>(!f||r['Fornecedor']===f)&&(!st||r['Status']===st)&&(!rg||r['Regional']===rg)&&(!sv||r['Gravidade']===sv)&&
+    (!q||Object.values(r).join(' ').toLowerCase().includes(q)));
+}
+function renderPainel(){
+  const rs=filtrados();
+  const cnt=k=>rs.filter(r=>r['Status']===k).length;
+  const placas=new Set(rs.map(r=>r['Placa'])).size;
+  $('#pKpis').innerHTML=[['Avarias',rs.length,'var(--cyan)'],['Veículos',placas,'var(--txt)'],['Pendentes',cnt('Pendente'),'var(--yellow)'],
+    ['No fornecedor',cnt('Enviado ao fornecedor')+cnt('Em reparo'),'#b388ff'],['Concluídas',cnt('Concluído'),'var(--green)'],['Graves',rs.filter(r=>r['Gravidade']==='Grave').length,'var(--red)']]
+    .map(([l,v,c])=>`<div class="kpi"><small>${l}</small><b style="color:${c}">${v}</b></div>`).join('');
+  $('#pRows').innerHTML=rs.slice().reverse().map(r=>{
+    const fotos=String(r['Fotos']||'').split('\n').filter(Boolean).map((u,i)=>`<a href="${esc(u)}" target="_blank">📷${i+1}</a>`).join(' ');
+    const sevc={Grave:'var(--red)',Moderada:'var(--yellow)',Leve:'var(--green)'}[r['Gravidade']]||'var(--mut)';
+    return `<tr><td>${esc(fmtData(r['Data/Hora']))}</td><td><b>${esc(r['Placa'])}</b></td><td>${esc(r['Loja'])}<br><small style="color:var(--mut)">${esc(r['Regional'])}</small></td>
+      <td>${esc(r['Fornecedor'])}</td><td>${esc(r['Peça/Local'])}</td><td>${esc(r['Tipo de dano'])}</td>
+      <td><span class="pill" style="color:${sevc};border-color:${sevc}">${esc(r['Gravidade'])}</span></td><td>${esc(r['Motivo do reparo'])}</td>
+      <td style="max-width:260px">${esc(r['Descrição'])}</td><td>${fotos}</td><td>${esc(r['Responsável'])}</td>
+      <td><select data-id="${esc(r['ID'])}" style="color:${STCOR[r['Status']]||'inherit'}">${STATUS.map(s=>`<option ${s===r['Status']?'selected':''}>${s}</option>`).join('')}</select></td></tr>`;
+  }).join('')||'<tr><td colspan="12" style="text-align:center;color:var(--mut);padding:30px">Nada encontrado</td></tr>';
+  $('#pRows').querySelectorAll('select').forEach(s=>s.onchange=async()=>{
+    s.disabled=true;
+    try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'status',key:sessionStorage.getItem('laudo_key'),id:s.dataset.id,status:s.value})});
+      const j=await r.json(); if(!j.ok) throw new Error(j.error);
+      pData.find(x=>String(x['ID'])===s.dataset.id)['Status']=s.value; renderPainel(); toast('Status atualizado ✓');}
+    catch(e){toast('Erro: '+e.message);s.disabled=false;}
+  });
+}
+function fmtData(v){const d=new Date(v);return isNaN(d)?v:d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}
+$('#pExport').onclick=()=>{
+  const rs=filtrados().map(r=>{const o={...r};o['Data/Hora']=fmtData(r['Data/Hora']);return o;});
+  if(!rs.length) return toast('Nada para exportar');
+  exportarExcel(rs,'avarias-fornecedores');
+};
+
+/* ---------------- Boot ---------------- */
+atualizaFila();
+if(!API) $('#localBanner').classList.remove('hidden');
+if(location.hash==='#painel'||new URLSearchParams(location.search).has('painel')) initPainel(); else irPara(1);
+</script>
+</body>
+</html>
