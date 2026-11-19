@@ -16,18 +16,23 @@ android {
         versionCode = build
         versionName = "1.$build"
     }
-    // chave fixa: todas as versões saem com a mesma assinatura, então o Android aceita atualizar por cima
-    signingConfigs {
-        create("laudo") {
-            storeFile = file("laudo.keystore")
-            storePassword = "laudoavaria"
-            keyAlias = "laudo"
-            keyPassword = "laudoavaria"
+    // Chave fixa guardada nos Secrets do GitHub (não fica no repositório).
+    // Todas as versões saem com a mesma assinatura, então o Android aceita atualizar por cima.
+    val ks = System.getenv("LAUDO_KEYSTORE")
+    val ksPass = System.getenv("LAUDO_KEY_PASS")
+    if (ks != null && ksPass != null) {
+        signingConfigs {
+            create("laudo") {
+                storeFile = file(ks)
+                storePassword = ksPass
+                keyAlias = "laudo"
+                keyPassword = ksPass
+            }
         }
-    }
-    buildTypes {
-        getByName("debug") { signingConfig = signingConfigs.getByName("laudo") }
-        getByName("release") { signingConfig = signingConfigs.getByName("laudo"); isMinifyEnabled = false }
+        buildTypes {
+            getByName("debug") { signingConfig = signingConfigs.getByName("laudo") }
+            getByName("release") { signingConfig = signingConfigs.getByName("laudo") }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

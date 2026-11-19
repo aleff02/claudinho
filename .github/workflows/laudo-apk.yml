@@ -19,7 +19,19 @@ jobs:
           distribution: temurin
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
+      - name: Preparar chave de assinatura (Secrets)
+        env:
+          KS_B64: ${{ secrets.LAUDO_KEYSTORE_B64 }}
+        run: |
+          if [ -z "$KS_B64" ]; then
+            echo "::error::Falta o segredo LAUDO_KEYSTORE_B64 (Settings > Secrets and variables > Actions). APK não publicado."
+            exit 1
+          fi
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/laudo.keystore"
+          echo "LAUDO_KEYSTORE=$RUNNER_TEMP/laudo.keystore" >> "$GITHUB_ENV"
       - name: Compilar APK
+        env:
+          LAUDO_KEY_PASS: ${{ secrets.LAUDO_KEY_PASS }}
         run: |
           chmod +x gradlew
           set +e
