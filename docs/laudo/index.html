@@ -30,7 +30,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin:4px 
 .logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
   background:linear-gradient(135deg,var(--orange),#e04e00);box-shadow:0 0 24px rgba(255,122,26,.5);font-weight:800}
 .brand h1{font-family:Orbitron;font-size:15px;letter-spacing:.12em;margin:0}
-.brand small{display:block;color:var(--mut);font-size:11px;letter-spacing:.08em}
+.brand small{display:block;color:var(--mut);font-size:11px;letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand{min-width:0}.brand>div:last-child{min-width:0}.brand h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .iconbtn{background:var(--glass);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:8px 10px;font-size:13px;cursor:pointer}
 .progress{display:flex;gap:6px;margin-bottom:16px}
 .progress div{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;position:relative}
@@ -141,6 +142,101 @@ th{position:sticky;top:0;background:#1a120c;color:var(--cyan);font-weight:600;fo
 td select{padding:6px;font-size:12px;width:auto}
 td a{color:var(--cyan)}
 .pill{padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid}
+
+.perfil{display:flex;align-items:center;gap:12px;padding:4px 0 6px}
+.perfil .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--orange));display:grid;place-items:center;font-weight:800;color:#1a0a00;flex:none}
+.perfil b{display:block}.perfil small{color:var(--mut);font-size:12.5px}
+.perfil button{margin-left:auto}
+/* ======== PAINEL PROFISSIONAL (claro) ======== */
+body.pmode{background:#f5f3f1;color:#1f2328}
+body.pmode:before{display:none}
+.pm{--o:#ff6a13;--od:#d94f00;--ol:#fff1e8;--t:#1f2328;--m:#6b7280;--b:#e9e4df;font-family:Inter,system-ui,sans-serif;color:var(--t)}
+.pm-top{position:sticky;top:0;z-index:6;background:#fff;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 28px;flex-wrap:wrap}
+.pm-top:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--o),#ff9a4d)}
+.pm-brand{display:flex;align-items:center;gap:14px}
+.pm-logoimg{height:34px;width:auto;display:block}
+.pm-logo{width:38px;height:38px;border-radius:10px;background:var(--o);color:#fff;font-weight:800;font-size:18px;place-items:center}
+.pm-sep{width:1px;height:30px;background:var(--b)}
+.pm-brand b{display:block;font-size:17px;letter-spacing:-.01em}
+.pm-brand small,.pm-mut{color:var(--m);font-size:12.5px}
+.pm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pm-sync{font-size:12px;color:var(--m);margin-right:4px}
+.pm-btn{border:1px solid var(--b);background:#fff;color:var(--t);padding:9px 14px;border-radius:10px;font:600 13px Inter,sans-serif;cursor:pointer;transition:.15s;white-space:nowrap}
+.pm-btn:hover{border-color:var(--o);color:var(--od)}
+.pm-btn.pri{background:var(--o);border-color:var(--o);color:#fff}
+.pm-btn.pri:hover{background:var(--od);color:#fff}
+.pm-wrap{max-width:1380px;margin:0 auto;padding:22px 28px 60px}
+.pm-card{background:#fff;border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:14px}
+.pm-lbl{display:block;font-size:12px;color:var(--m);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.pm-row{display:flex;gap:8px}.pm-row>input{flex:1}
+.pm-err{color:#c81e3a;font-size:13px;margin-top:8px}
+.pm input,.pm select{background:#fff;border:1px solid var(--b);color:var(--t);border-radius:10px;padding:10px 12px;font-size:14px;width:100%}
+.pm input:focus,.pm select:focus{border-color:var(--o);box-shadow:0 0 0 3px var(--ol)}
+.pm-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.pm-kpi{background:#fff;border:1px solid var(--b);border-radius:14px;padding:14px 16px;position:relative;overflow:hidden}
+.pm-kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.pm-kpi small{display:block;color:var(--m);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.pm-kpi b{display:block;font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.02em}
+.pm-kpi span{font-size:12px;color:var(--m)}
+.pm-forn{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+.pm-fchip{border:1px solid var(--b);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.pm-fchip i{font-style:normal;font-weight:700;color:var(--od)}
+.pm-fchip.on{background:var(--o);border-color:var(--o);color:#fff}.pm-fchip.on i{color:#fff}
+.pm-tabs{display:flex;gap:2px;border-bottom:1px solid var(--b);margin:18px 0 14px;overflow:auto}
+.pm-tab{padding:10px 14px;border:0;background:none;font:600 14px Inter,sans-serif;color:var(--m);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.pm-tab:hover{color:var(--t)}
+.pm-tab.on{color:var(--od);border-bottom-color:var(--o)}
+.pm-tab i{font-style:normal;background:#f1eeeb;border-radius:999px;padding:1px 8px;font-size:12px;margin-left:6px;color:var(--m)}
+.pm-tab.on i{background:var(--ol);color:var(--od)}
+.pm-filters{display:grid;grid-template-columns:2.2fr repeat(4,1fr);gap:10px;margin-bottom:14px}
+.pm-table{background:#fff;border:1px solid var(--b);border-radius:14px;overflow:auto}
+.pm table{border-collapse:collapse;width:100%;min-width:980px;font-size:14px}
+.pm th{background:#faf8f6;color:var(--m);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:11px 14px;border-bottom:1px solid var(--b);position:sticky;top:0}
+.pm td{padding:10px 14px;border-bottom:1px solid #f2ede8;vertical-align:middle;color:var(--t)}
+.pm tbody tr{cursor:pointer;transition:background .12s}
+.pm tbody tr:hover td{background:#fff8f3}
+.pm td small{display:block;color:var(--m);font-size:12.5px;margin-top:2px}
+.thumb{width:68px;height:50px;border-radius:8px;background:#f1eeeb center/cover no-repeat;display:grid;place-items:center;color:#b9b0a8;font-size:18px;position:relative;border:1px solid var(--b)}
+.thumb b{position:absolute;right:-5px;top:-5px;background:var(--o);color:#fff;font-size:10.5px;border-radius:999px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px;border:2px solid #fff}
+.ptag{display:inline-block;font-family:Orbitron,monospace;font-weight:800;letter-spacing:.08em;font-size:13px;border:2px solid #23272e;border-top:5px solid #003399;border-radius:6px;padding:2px 8px;background:#fff;color:#111}
+.pill2{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.pill2:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pm-foot{color:var(--m);font-size:12.5px;margin-top:10px;text-align:right}
+.pm-empty{text-align:center;color:var(--m);padding:50px 10px}
+/* Ficha lateral */
+.pm-dbg{position:fixed;inset:0;background:rgba(20,14,10,.35);opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.pm-dbg.open{opacity:1;pointer-events:auto}
+.pm-drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:#fff;z-index:21;transform:translateX(102%);transition:.28s cubic-bezier(.2,.9,.3,1);overflow:auto;box-shadow:-20px 0 60px rgba(0,0,0,.15);font-family:Inter,sans-serif;color:#1f2328}
+.pm-drawer.open{transform:none}
+.dr-head{padding:18px 22px;border-bottom:1px solid #e9e4df;position:sticky;top:0;background:#fff;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.dr-head:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#ff6a13,#ff9a4d)}
+.dr-head h3{margin:8px 0 2px;font-size:19px}
+.dr-x{border:1px solid #e9e4df;background:#fff;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:16px}
+.dr-sec{padding:16px 22px;border-bottom:1px solid #f2ede8}
+.dr-sec h4{margin:0 0 10px;font-size:11.5px;color:#6b7280;text-transform:uppercase;letter-spacing:.06em}
+.dr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.dr-grid div small{display:block;color:#6b7280;font-size:12px}
+.dr-grid div b{font-weight:600;font-size:14px}
+.dr-desc{background:#faf8f6;border:1px solid #f0ebe6;border-radius:10px;padding:12px;font-size:14.5px;line-height:1.5}
+.dr-fotos{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dr-fotos .f{aspect-ratio:4/3;border-radius:10px;background:#f1eeeb center/cover no-repeat;cursor:zoom-in;border:1px solid #e9e4df;display:grid;place-items:center;color:#b9b0a8;transition:.15s}
+.dr-fotos .f:hover{transform:scale(1.02);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.dr-st{display:flex;flex-wrap:wrap;gap:8px}
+.dr-st button{border:1px solid #e9e4df;background:#fff;border-radius:999px;padding:8px 12px;font:600 13px Inter,sans-serif;cursor:pointer}
+.dr-st button.on{color:#fff;border-color:transparent}
+.dr-act{display:flex;gap:8px;flex-wrap:wrap}
+/* Visualizador */
+.lb{position:fixed;inset:0;background:rgba(12,8,5,.94);z-index:40;display:none;align-items:center;justify-content:center}
+.lb.open{display:flex}
+.lb img{max-width:92vw;max-height:84vh;border-radius:10px;box-shadow:0 20px 80px rgba(0,0,0,.6)}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:50%;cursor:pointer;backdrop-filter:blur(6px)}
+.lb button:hover{background:#ff6a13}
+.lb-x{top:18px;right:18px;width:44px;height:44px;font-size:18px}
+.lb-nav{top:50%;transform:translateY(-50%);width:54px;height:54px;font-size:30px}
+.lb-p{left:18px}.lb-n{right:18px}
+.lb-bar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:16px;align-items:center;color:#fff;font:500 14px Inter,sans-serif;background:rgba(255,255,255,.1);padding:8px 16px;border-radius:999px}
+.lb-bar a{color:#ffb27a;text-decoration:none;font-weight:600}
+@media(max-width:900px){.pm-kpis{grid-template-columns:repeat(2,1fr)}.pm-filters{grid-template-columns:1fr 1fr}.pm-filters input{grid-column:1/-1}.pm-top,.pm-wrap{padding-left:14px;padding-right:14px}}
 </style>
 </head>
 <body>
@@ -150,7 +246,7 @@ td a{color:var(--cyan)}
 <div id="app" class="wrap">
   <header>
     <div class="brand"><div class="logo">M</div><div><h1>LAUDO DE AVARIA</h1><small>Frota · encaminhamento ao fornecedor</small></div></div>
-    <button class="iconbtn" id="btnFila" title="Laudos salvos no aparelho">📦 <span id="filaN">0</span></button>
+    <div style="display:flex;gap:8px"><button class="iconbtn" id="btnFila" title="Laudos salvos no aparelho">📦 <span id="filaN">0</span></button><button class="iconbtn" id="btnCfg" title="Configurações">⚙</button></div>
   </header>
   <div class="card hidden" id="localBanner" style="border-color:rgba(255,210,63,.4)">
     <b style="color:var(--yellow)">Ative o envio automático</b>
@@ -169,14 +265,24 @@ td a{color:var(--cyan)}
       <div class="platehint" id="placaHint">Digite a placa</div>
     </div>
     <div class="card">
-      <label class="f">Loja</label>
-      <input id="loja" list="lojasList" placeholder="Comece a digitar o nome da loja">
-      <datalist id="lojasList"></datalist>
-      <div class="row">
-        <div><label class="f">KM atual</label><input id="km" inputmode="numeric" placeholder="Ex.: 45320"></div>
-        <div><label class="f">Seu nome</label><input id="resp" placeholder="Nome do frota"></div>
-      </div>
+      <div class="perfil" id="perfilChip"></div>
+      <label class="f">KM atual (opcional)</label><input id="km" inputmode="numeric" placeholder="Ex.: 45320">
     </div>
+  </section>
+
+  <!-- Perfil / configurações -->
+  <section id="s0" class="hidden">
+    <p class="steplbl">CONFIGURAÇÕES</p>
+    <h2 id="s0t">Configure seu perfil</h2>
+    <p style="color:var(--mut);margin:-6px 0 14px;font-size:14px">Fica salvo neste aparelho. Você não precisa preencher de novo a cada laudo.</p>
+    <div class="card">
+      <label class="f">Seu nome</label><input id="cfgNome" placeholder="Nome e sobrenome" autocomplete="name">
+      <label class="f">Sua loja</label><input id="cfgLoja" list="lojasList" placeholder="Comece a digitar o nome da loja">
+      <datalist id="lojasList"></datalist>
+      <div class="platehint" id="cfgHint" style="text-align:left"></div>
+    </div>
+    <button class="btn orange" id="cfgSalvar">Salvar perfil</button>
+    <button class="btn ghost hidden" id="cfgCancel" style="margin-top:10px">Cancelar</button>
   </section>
 
   <!-- Passo 2 -->
@@ -281,39 +387,63 @@ td a{color:var(--cyan)}
 </div></div>
 
 <!-- ================= PAINEL (gestão) ================= -->
-<div id="painel" class="wrap wide hidden">
-  <header>
-    <div class="brand"><div class="logo">M</div><div><h1>PAINEL DE AVARIAS</h1><small>Consolidação para fornecedores</small></div></div>
-    <div style="display:flex;gap:8px"><button class="iconbtn" id="pLink">🔗 Link dos frotas</button><button class="iconbtn" id="pRefresh">⟳ Atualizar</button><button class="iconbtn" id="pExport">⬇ Excel</button></div>
-  </header>
-  <div class="card hidden" id="pGh">
-    <label class="f">Token do GitHub (cole uma vez — fica salvo só neste aparelho)</label>
-    <div class="row"><input id="pGhTok" type="password" placeholder="github_pat_..." autocomplete="off"><button class="btn" id="pGhOk" style="flex:0 0 120px">Salvar</button></div>
-  </div>
-  <div class="card hidden" id="pLinkBox">
-    <label class="f">Link para mandar aos frotas</label>
-    <input id="pLinkTxt" readonly>
-    <div class="row" style="margin-top:10px"><button class="btn" id="pLinkCopy">Copiar link</button><button class="btn orange" id="pLinkWpp">Mandar no WhatsApp</button></div>
-    <small style="color:var(--mut);display:block;margin-top:8px">Ao abrir o link, o celular do frota já fica conectado. Não poste em lugar público.</small>
-  </div>
-  <div class="card hidden" id="pLogin">
-    <label class="f">Token do GitHub ou chave do painel</label>
-    <div class="row"><input id="pKey" type="password" placeholder="Chave definida no Apps Script"><button class="btn" id="pEnter" style="flex:0 0 120px">Entrar</button></div>
-    <div class="err" id="pErr"></div>
-  </div>
-  <div id="pBody" class="hidden">
-    <div class="kpis" id="pKpis"></div>
-    <div class="filters">
-      <input id="fBusca" placeholder="Buscar placa, loja, descrição...">
-      <select id="fForn"><option value="">Todos os fornecedores</option></select>
-      <select id="fStatus"><option value="">Todos os status</option></select>
-      <select id="fReg"><option value="">Todas as regionais</option></select>
-      <select id="fSev"><option value="">Toda gravidade</option><option>Grave</option><option>Moderada</option><option>Leve</option></select>
+<div id="painel" class="pm hidden">
+  <div class="pm-top">
+    <div class="pm-brand">
+      <img src="logo.png" alt="Logo" class="pm-logoimg" onerror="this.remove();document.getElementById('pmLogoM').style.display='grid'">
+      <div class="pm-logo" id="pmLogoM" style="display:none">M</div>
+      <div class="pm-sep"></div>
+      <div><b>Painel de Avarias</b><small>Laudos dos frotas · encaminhamento a fornecedores</small></div>
     </div>
-    <div class="tbl"><table><thead><tr>
-      <th>Data</th><th>Placa</th><th>Loja</th><th>Fornecedor</th><th>Peça</th><th>Dano</th><th>Grav.</th><th>Motivo</th><th>Descrição</th><th>Fotos</th><th>Frota</th><th>Status</th>
-    </tr></thead><tbody id="pRows"></tbody></table></div>
+    <div class="pm-actions">
+      <span class="pm-sync" id="pSync"></span>
+      <button class="pm-btn" id="pLink">🔗 Link dos frotas</button>
+      <button class="pm-btn" id="pRefresh">⟳ Atualizar</button>
+      <button class="pm-btn pri" id="pExport">⬇ Exportar Excel</button>
+    </div>
   </div>
+  <div class="pm-wrap">
+    <div class="pm-card hidden" id="pGh">
+      <label class="pm-lbl">Token do GitHub (cole uma vez — fica salvo só neste computador)</label>
+      <div class="pm-row"><input id="pGhTok" type="password" placeholder="github_pat_..." autocomplete="off"><button class="pm-btn pri" id="pGhOk">Salvar</button></div>
+    </div>
+    <div class="pm-card hidden" id="pLinkBox">
+      <label class="pm-lbl">Link para mandar aos frotas</label>
+      <input id="pLinkTxt" readonly>
+      <div class="pm-row" style="margin-top:10px"><button class="pm-btn" id="pLinkCopy">Copiar link</button><button class="pm-btn pri" id="pLinkWpp">Mandar no WhatsApp</button></div>
+      <small class="pm-mut" style="display:block;margin-top:8px">Ao abrir o link, o celular do frota já fica conectado. Não poste em lugar público.</small>
+    </div>
+    <div class="pm-card hidden" id="pLogin">
+      <label class="pm-lbl">Token do GitHub ou chave do painel</label>
+      <div class="pm-row"><input id="pKey" type="password" placeholder="github_pat_..."><button class="pm-btn pri" id="pEnter">Entrar</button></div>
+      <div class="pm-err" id="pErr"></div>
+    </div>
+    <div id="pBody" class="hidden">
+      <div class="pm-kpis" id="pKpis"></div>
+      <div class="pm-forn" id="pForn"></div>
+      <div class="pm-tabs" id="pTabs"></div>
+      <div class="pm-filters">
+        <input id="fBusca" placeholder="🔍  Buscar placa, loja, descrição, frota...">
+        <select id="fForn"><option value="">Todos os fornecedores</option></select>
+        <select id="fReg"><option value="">Todas as regionais</option></select>
+        <select id="fSev"><option value="">Toda gravidade</option><option>Grave</option><option>Moderada</option><option>Leve</option></select>
+        <select id="fPer"><option value="">Todo o período</option><option value="1">Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select>
+      </div>
+      <div class="pm-table"><table><thead><tr>
+        <th style="width:84px">Foto</th><th>Placa</th><th>Peça / dano</th><th>Fornecedor</th><th>Gravidade</th><th>Loja</th><th>Registrado</th><th>Status</th>
+      </tr></thead><tbody id="pRows"></tbody></table></div>
+      <div class="pm-foot" id="pFoot"></div>
+    </div>
+  </div>
+</div>
+<div class="pm-dbg" id="dBg"></div>
+<aside class="pm-drawer" id="drawer"></aside>
+<div class="lb" id="lb">
+  <button class="lb-x" id="lbX" title="Fechar (Esc)">✕</button>
+  <button class="lb-nav lb-p" id="lbP">‹</button>
+  <img id="lbImg" alt="Foto da avaria">
+  <button class="lb-nav lb-n" id="lbN">›</button>
+  <div class="lb-bar"><span id="lbCap"></span><a id="lbDl" download>⬇ Baixar</a></div>
 </div>
 
 <script>
@@ -417,7 +547,8 @@ const MOTIVOS = ['Risco à segurança','Impede a locação','Reprovado no checkl
 let step = 1;
 let laudo = novoLaudo();
 let edit = null; // avaria em edição
-function novoLaudo(){ return {placa:'',loja:'',km:'',resp:localStorage.getItem('laudo_resp')||'',obs:'',avarias:[]}; }
+function perfil(){try{return JSON.parse(localStorage.getItem('laudo_perfil')||'null');}catch(e){return null;}}
+function novoLaudo(){ const p=perfil()||{}; return {placa:'',loja:p.loja||'',km:'',resp:p.nome||'',obs:'',avarias:[]}; }
 
 const $ = s=>document.querySelector(s);
 const el = (t,a={},h='')=>{const e=document.createElement(t);Object.assign(e,a);if(h)e.innerHTML=h;return e;};
@@ -435,7 +566,26 @@ $('#placa').addEventListener('input',e=>{
   else if(placaRe.test(v)){h.textContent='✓ Placa válida';h.className='platehint ok';}
   else {h.textContent=v.length<7?'Continue digitando…':'Formato esperado: ABC1D23 ou ABC1234';h.className='platehint bad';}
 });
-['loja','km','resp'].forEach(id=>{const i=$('#'+id);i.value=laudo[id];i.addEventListener('input',()=>laudo[id]=i.value.trim());});
+/* Perfil fixo do frota (nome + loja) */
+function renderPerfil(){const p=perfil(); if(!p) return;
+  $('#perfilChip').innerHTML=`<div class="av">${esc((p.nome||'?').trim()[0]||'?').toUpperCase()}</div><div><b>${esc(p.nome)}</b><small>${esc(p.loja)} · ${esc(LOJA2REG[p.loja]||'')}</small></div><button class="iconbtn" id="perfEdit">Alterar</button>`;
+  $('#perfEdit').onclick=abrirCfg;}
+function abrirCfg(){const p=perfil();
+  $('#cfgNome').value=p?.nome||''; $('#cfgLoja').value=p?.loja||''; $('#cfgHint').textContent='';
+  $('#s0t').textContent=p?'Configurações':'Configure seu perfil'; $('#cfgCancel').classList.toggle('hidden',!p);
+  irPara(0);}
+$('#cfgLoja').addEventListener('input',()=>{const v=$('#cfgLoja').value.trim(),h=$('#cfgHint');
+  if(LOJA2REG[v]){h.textContent='✓ '+LOJA2REG[v];h.className='platehint ok';}else{h.textContent=v?'Escolha uma loja da lista':'';h.className='platehint bad';}});
+$('#cfgSalvar').onclick=()=>{const nome=$('#cfgNome').value.trim(),loja=$('#cfgLoja').value.trim();
+  if(nome.length<3) return toast('Informe seu nome');
+  if(!LOJA2REG[loja]) return toast('Escolha sua loja na lista');
+  localStorage.setItem('laudo_perfil',JSON.stringify({nome,loja})); laudo.resp=nome; laudo.loja=loja;
+  renderPerfil(); toast('Perfil salvo ✓'); irPara(1);};
+$('#cfgCancel').onclick=()=>irPara(1);
+$('#btnCfg').onclick=abrirCfg;
+// migra quem já tinha nome salvo
+if(!perfil()&&localStorage.getItem('laudo_resp')) $('#cfgNome').value=localStorage.getItem('laudo_resp');
+$('#km').value=laudo.km; $('#km').addEventListener('input',()=>laudo.km=$('#km').value.trim());
 $('#km').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');laudo.km=e.target.value;});
 
 /* ---------------- Passo 2 ---------------- */
@@ -559,10 +709,11 @@ function renderResumo(){
 /* ---------------- Navegação ---------------- */
 function irPara(n){
   step=n;
-  ['s1','s2','s3','s4'].forEach((s,i)=>$('#'+s).classList.toggle('hidden',i+1!==n));
+  ['s0','s1','s2','s3','s4'].forEach((s,i)=>$('#'+s).classList.toggle('hidden',i!==n));
+  $('.progress').classList.toggle('hidden',n===0);
   document.querySelectorAll('.progress div').forEach((d,i)=>d.classList.toggle('on',i<Math.min(n,3)));
   $('#btnBack').classList.toggle('hidden',n===1||n===4);
-  $('#bar').classList.toggle('hidden',n===4);
+  $('#bar').classList.toggle('hidden',n===4||n===0);
   $('#btnNext').textContent=n===3?'Enviar laudo 🚀':'Continuar';
   $('#btnNext').className='btn'+(n===3?' orange':'');
   if(n===2) renderLista();
@@ -573,7 +724,8 @@ $('#btnBack').onclick=()=>irPara(step-1);
 $('#btnNext').onclick=()=>{
   if(step===1){
     if(!placaRe.test(laudo.placa)) return toast('Confira a placa');
-    if(!laudo.loja) return toast('Informe a loja');
+    if(!perfil()) return abrirCfg();
+    const p=perfil(); laudo.loja=p.loja; laudo.resp=p.nome;
     if(!laudo.resp) return toast('Informe seu nome');
     localStorage.setItem('laudo_resp',laudo.resp);
     return irPara(2);
@@ -654,9 +806,12 @@ $('#btnNovo').onclick=()=>{const keep={resp:laudo.resp,loja:laudo.loja};laudo=no
 
 /* =================== PAINEL =================== */
 const STATUS=['Pendente','Enviado ao fornecedor','Em reparo','Concluído','Recusado'];
-const STCOR={'Pendente':'#ffd23f','Enviado ao fornecedor':'#22e4ff','Em reparo':'#b388ff','Concluído':'#2bff9a','Recusado':'#ff4d6d'};
-let pData=[];
+const STC={'Pendente':['#fff4d6','#9a6700'],'Enviado ao fornecedor':['#e8f0ff','#1d5fd1'],'Em reparo':['#f1eaff','#6b3fd1'],'Concluído':['#e5f7ee','#127a46'],'Recusado':['#f1f2f4','#5b6270']};
+const SVC={'Grave':['#fdebee','#c81e3a'],'Moderada':['#fff4d6','#9a6700'],'Leve':['#e5f7ee','#127a46']};
+const pill=(v,m)=>{const c=(m[v]||['#f1f2f4','#5b6270']);return `<span class="pill2" style="background:${c[0]};color:${c[1]}">${esc(v||'—')}</span>`;};
+let pData=[], stTab='', fornSel='';
 function initPainel(){
+  document.body.classList.add('pmode'); document.documentElement.style.background='#f5f3f1';
   $('#app').classList.add('hidden');$('#bar').classList.add('hidden');$('#painel').classList.remove('hidden');$('#localBanner').classList.add('hidden');
   if(GH_ON){carregarGH();return;}
   if(!API){$('#pGh').classList.remove('hidden');return;}
@@ -673,10 +828,28 @@ $('#pEnter').onclick=()=>{const v=$('#pKey').value.trim();
   if(!API){$('#pErr').textContent='Cole aqui o token do GitHub (começa com github_pat_).';return;}
   carregar(v);};
 $('#pRefresh').onclick=()=>GH_ON?carregarGH():carregar(sessionStorage.getItem('laudo_key'));
-let ghFiles={}; // id -> caminho do json
+
+/* ---- fotos (repositório privado: baixa com o token e mostra) ---- */
+const fotoCache=new Map();
+function fotoURL(path){
+  if(/^https?:/.test(path)) return Promise.resolve(null); // Drive (Sheets): só link
+  if(!fotoCache.has(path)) fotoCache.set(path,(async()=>{
+    const r=await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}?ref=${GH.branch}`,
+      {headers:{'Authorization':'Bearer '+GH.token,'Accept':'application/vnd.github.raw+json'}});
+    if(!r.ok) throw new Error(r.status); return URL.createObjectURL(await r.blob());})());
+  return fotoCache.get(path);
+}
+function carregarThumbs(root){
+  const els=[...root.querySelectorAll('[data-foto]')]; let i=0;
+  const work=async()=>{while(i<els.length){const e=els[i++];try{const u=await fotoURL(e.dataset.foto);
+    if(u){e.style.backgroundImage=`url("${u}")`;e.firstChild&&e.firstChild.nodeType===3&&(e.firstChild.textContent='');}}catch(x){}}};
+  for(let k=0;k<4;k++) work();
+}
+
+let ghFiles={};
 async function carregarGH(){
   try{
-    toast('Buscando no GitHub…');
+    $('#pSync').textContent='Sincronizando…';
     let tree; try{ tree=await gh(`git/trees/${GH.branch}?recursive=1`); }
     catch(e){ if(/409|404/.test(e.message)) tree={tree:[]}; else throw e; }
     const arqs=tree.tree.filter(t=>t.type==='blob'&&/^laudos\/.+\.json$/.test(t.path));
@@ -688,11 +861,9 @@ async function carregarGH(){
       pData.push({'ID':id,'Protocolo':l.protocolo,'Data/Hora':l.dataHora,'Placa':l.placa,'Loja':l.loja,'Regional':l.regional,'KM':l.km,
         'Fornecedor':a.fornecedor,'Categoria':a.categoria,'Peça/Local':a.peca,'Tipo de dano':a.tipo,'Gravidade':a.severidade,'Motivo do reparo':a.motivo,
         'Descrição':a.descricao,'Fotos':(a.fotos||[]).map(f=>`https://github.com/${GH.owner}/${GH.repo}/blob/${GH.branch}/${f}`).join('\n'),
-        'Responsável':l.responsavel,'Obs. geral':l.obs,'Status':a.status||'Pendente'});}));
-    pData.sort((a,b)=>String(a['Data/Hora']).localeCompare(String(b['Data/Hora'])));
-    $('#pLogin').classList.add('hidden'); $('#pBody').classList.remove('hidden');
-    preencherFiltros(); renderPainel(); toast(`${pData.length} avaria(s) carregadas`);
-  }catch(e){$('#pLogin').classList.remove('hidden');$('#pErr').textContent=e.message;}
+        'Responsável':l.responsavel,'Obs. geral':l.obs,'Status':a.status||'Pendente','_fotos':a.fotos||[]});}));
+    pronto();
+  }catch(e){$('#pSync').textContent='';$('#pLogin').classList.remove('hidden');$('#pErr').textContent=e.message;}
 }
 async function statusGH(id,status){
   const path=ghFiles[id]; const meta=await gh('contents/'+path);
@@ -705,54 +876,133 @@ async function carregar(key){
   try{
     const r=await fetch(`${API}?action=list&key=${encodeURIComponent(key)}`); const j=await r.json();
     if(!j.ok) throw new Error(j.error||'Chave inválida');
-    sessionStorage.setItem('laudo_key',key); pData=j.rows;
-    $('#pLogin').classList.add('hidden'); $('#pBody').classList.remove('hidden');
-    preencherFiltros(); renderPainel(); toast(`${pData.length} avaria(s) carregadas`);
+    sessionStorage.setItem('laudo_key',key);
+    pData=j.rows.map(r=>({...r,_fotos:String(r['Fotos']||'').split('\n').filter(Boolean)}));
+    pronto();
   }catch(e){$('#pLogin').classList.remove('hidden');$('#pErr').textContent=e.message;}
+}
+function pronto(){
+  pData.sort((a,b)=>String(b['Data/Hora']).localeCompare(String(a['Data/Hora'])));
+  $('#pLogin').classList.add('hidden'); $('#pBody').classList.remove('hidden');
+  $('#pSync').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  preencherFiltros(); renderPainel();
 }
 function preencherFiltros(){
   const fill=(sel,vals,lbl)=>{const s=$(sel),cur=s.value;s.innerHTML=`<option value="">${lbl}</option>`+[...new Set(vals)].filter(Boolean).sort().map(v=>`<option>${esc(v)}</option>`).join('');s.value=cur;};
   fill('#fForn',pData.map(r=>r['Fornecedor']),'Todos os fornecedores');
-  fill('#fStatus',STATUS,'Todos os status');
   fill('#fReg',pData.map(r=>r['Regional']),'Todas as regionais');
 }
-['#fBusca','#fForn','#fStatus','#fReg','#fSev'].forEach(s=>$(s).addEventListener('input',renderPainel));
-function filtrados(){
-  const q=$('#fBusca').value.toLowerCase(),f=$('#fForn').value,st=$('#fStatus').value,rg=$('#fReg').value,sv=$('#fSev').value;
-  return pData.filter(r=>(!f||r['Fornecedor']===f)&&(!st||r['Status']===st)&&(!rg||r['Regional']===rg)&&(!sv||r['Gravidade']===sv)&&
-    (!q||Object.values(r).join(' ').toLowerCase().includes(q)));
+['#fBusca','#fForn','#fReg','#fSev','#fPer'].forEach(s=>$(s).addEventListener('input',()=>{if(s==='#fForn')fornSel=$('#fForn').value;renderPainel();}));
+function baseFiltro(){ // tudo menos a aba de status
+  const q=$('#fBusca').value.toLowerCase(),f=fornSel,rg=$('#fReg').value,sv=$('#fSev').value,per=+$('#fPer').value;
+  const lim=per?Date.now()-per*864e5:0;
+  return pData.filter(r=>(!f||r['Fornecedor']===f)&&(!rg||r['Regional']===rg)&&(!sv||r['Gravidade']===sv)&&
+    (!lim||new Date(r['Data/Hora']).getTime()>=(per===1?new Date().setHours(0,0,0,0):lim))&&
+    (!q||Object.entries(r).filter(([k])=>k[0]!=='_').map(([,v])=>v).join(' ').toLowerCase().includes(q)));
 }
+function filtrados(){ const b=baseFiltro(); return stTab?b.filter(r=>r['Status']===stTab):b; }
 function renderPainel(){
-  const rs=filtrados();
-  const cnt=k=>rs.filter(r=>r['Status']===k).length;
-  const placas=new Set(rs.map(r=>r['Placa'])).size;
-  $('#pKpis').innerHTML=[['Avarias',rs.length,'var(--cyan)'],['Veículos',placas,'var(--txt)'],['Pendentes',cnt('Pendente'),'var(--yellow)'],
-    ['No fornecedor',cnt('Enviado ao fornecedor')+cnt('Em reparo'),'#b388ff'],['Concluídas',cnt('Concluído'),'var(--green)'],['Graves',rs.filter(r=>r['Gravidade']==='Grave').length,'var(--red)']]
-    .map(([l,v,c])=>`<div class="kpi"><small>${l}</small><b style="color:${c}">${v}</b></div>`).join('');
-  $('#pRows').innerHTML=rs.slice().reverse().map(r=>{
-    const fotos=String(r['Fotos']||'').split('\n').filter(Boolean).map((u,i)=>`<a href="${esc(u)}" target="_blank">📷${i+1}</a>`).join(' ');
-    const sevc={Grave:'var(--red)',Moderada:'var(--yellow)',Leve:'var(--green)'}[r['Gravidade']]||'var(--mut)';
-    return `<tr><td>${esc(fmtData(r['Data/Hora']))}</td><td><b>${esc(r['Placa'])}</b></td><td>${esc(r['Loja'])}<br><small style="color:var(--mut)">${esc(r['Regional'])}</small></td>
-      <td>${esc(r['Fornecedor'])}</td><td>${esc(r['Peça/Local'])}</td><td>${esc(r['Tipo de dano'])}</td>
-      <td><span class="pill" style="color:${sevc};border-color:${sevc}">${esc(r['Gravidade'])}</span></td><td>${esc(r['Motivo do reparo'])}</td>
-      <td style="max-width:260px">${esc(r['Descrição'])}</td><td>${fotos}</td><td>${esc(r['Responsável'])}</td>
-      <td><select data-id="${esc(r['ID'])}" style="color:${STCOR[r['Status']]||'inherit'}">${STATUS.map(s=>`<option ${s===r['Status']?'selected':''}>${s}</option>`).join('')}</select></td></tr>`;
-  }).join('')||'<tr><td colspan="12" style="text-align:center;color:var(--mut);padding:30px">Nada encontrado</td></tr>';
-  $('#pRows').querySelectorAll('select').forEach(s=>s.onchange=async()=>{
-    s.disabled=true;
-    try{ if(GH_ON) await statusGH(s.dataset.id,s.value); else {
-      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'status',key:sessionStorage.getItem('laudo_key'),id:s.dataset.id,status:s.value})});
-      const j=await r.json(); if(!j.ok) throw new Error(j.error);}
-      pData.find(x=>String(x['ID'])===s.dataset.id)['Status']=s.value; renderPainel(); toast('Status atualizado ✓');}
-    catch(e){toast('Erro: '+e.message);s.disabled=false;}
-  });
+  const base=baseFiltro(), rs=stTab?base.filter(r=>r['Status']===stTab):base;
+  const cnt=k=>base.filter(r=>r['Status']===k).length;
+  const placas=new Set(base.map(r=>r['Placa'])).size;
+  $('#pKpis').innerHTML=[['Avarias',base.length,'#ff6a13',`${placas} veículo(s)`],['Pendentes',cnt('Pendente'),'#e0a100','aguardando envio'],
+    ['No fornecedor',cnt('Enviado ao fornecedor')+cnt('Em reparo'),'#6b3fd1','enviado / em reparo'],['Concluídas',cnt('Concluído'),'#127a46','reparo finalizado'],
+    ['Graves',base.filter(r=>r['Gravidade']==='Grave').length,'#c81e3a','prioridade'],['Com foto',base.filter(r=>r._fotos.length).length,'#1d5fd1',`de ${base.length}`]]
+    .map(([l,v,c,sub])=>`<div class="pm-kpi" style="--c:${c}"><small>${l}</small><b>${v}</b><span>${sub}</span></div>`).join('');
+  // chips por fornecedor
+  const pf={}; pData.forEach(r=>pf[r['Fornecedor']]=(pf[r['Fornecedor']]||0)+1);
+  $('#pForn').innerHTML=Object.entries(pf).sort((a,b)=>b[1]-a[1]).map(([f,n])=>`<div class="pm-fchip ${fornSel===f?'on':''}" data-f="${esc(f)}">${esc(f)} <i>${n}</i></div>`).join('');
+  $('#pForn').querySelectorAll('.pm-fchip').forEach(c=>c.onclick=()=>{fornSel=fornSel===c.dataset.f?'':c.dataset.f;$('#fForn').value=fornSel;renderPainel();});
+  // abas de status
+  $('#pTabs').innerHTML=[['','Todas',base.length],...STATUS.map(s=>[s,s,cnt(s)])].map(([v,l,n])=>`<button class="pm-tab ${stTab===v?'on':''}" data-s="${esc(v)}">${l}<i>${n}</i></button>`).join('');
+  $('#pTabs').querySelectorAll('.pm-tab').forEach(t=>t.onclick=()=>{stTab=t.dataset.s;renderPainel();});
+  // linhas
+  $('#pRows').innerHTML=rs.map(r=>{
+    const f=r._fotos, img=f.find(x=>!/^https?:/.test(x));
+    return `<tr data-id="${esc(r['ID'])}">
+      <td><div class="thumb" ${img?`data-foto="${esc(img)}"`:''}>${f.length?(img?'':'🔗'):'📷'}${f.length>1?`<b>${f.length}</b>`:''}</div></td>
+      <td><span class="ptag">${esc(r['Placa'])}</span><small>${esc(r['Protocolo'])}</small></td>
+      <td><b style="font-weight:600">${esc(r['Peça/Local'])}</b><small>${esc(r['Tipo de dano'])}</small></td>
+      <td>${esc(r['Fornecedor'])}</td>
+      <td>${pill(r['Gravidade'],SVC)}</td>
+      <td>${esc(r['Loja'])}<small>${esc(r['Regional'])}</small></td>
+      <td>${esc(fmtData(r['Data/Hora']))}<small>${esc(r['Responsável'])}</small></td>
+      <td>${pill(r['Status'],STC)}</td></tr>`;
+  }).join('')||`<tr><td colspan="8"><div class="pm-empty">Nenhuma avaria encontrada com esses filtros.</div></td></tr>`;
+  $('#pRows').querySelectorAll('tr[data-id]').forEach(tr=>tr.onclick=()=>abrirFicha(tr.dataset.id));
+  $('#pFoot').textContent=`${rs.length} de ${pData.length} avaria(s)`;
+  carregarThumbs($('#pRows'));
 }
 function fmtData(v){const d=new Date(v);return isNaN(d)?v:d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}
 $('#pExport').onclick=()=>{
-  const rs=filtrados().map(r=>{const o={...r};o['Data/Hora']=fmtData(r['Data/Hora']);return o;});
+  const rs=filtrados().map(r=>{const o={};Object.entries(r).forEach(([k,v])=>{if(k[0]!=='_')o[k]=v;});o['Data/Hora']=fmtData(r['Data/Hora']);return o;});
   if(!rs.length) return toast('Nada para exportar');
   exportarExcel(rs,'avarias-fornecedores');
 };
+
+/* ---- ficha da avaria ---- */
+let fichaId=null;
+function abrirFicha(id){
+  const r=pData.find(x=>String(x['ID'])===String(id)); if(!r) return; fichaId=id;
+  const imgs=r._fotos.filter(x=>!/^https?:/.test(x)), links=r._fotos.filter(x=>/^https?:/.test(x));
+  const campo=(l,v)=>`<div><small>${l}</small><b>${esc(v||'—')}</b></div>`;
+  $('#drawer').innerHTML=`
+   <div class="dr-head"><div><span class="ptag" style="font-size:16px">${esc(r['Placa'])}</span>
+     <h3>${esc(r['Peça/Local'])} · ${esc(r['Tipo de dano'])}</h3>
+     <div style="display:flex;gap:6px;flex-wrap:wrap">${pill(r['Gravidade'],SVC)} ${pill(r['Status'],STC)}</div></div>
+     <button class="dr-x" id="drX">✕</button></div>
+   <div class="dr-sec"><h4>Fotos (${r._fotos.length})</h4>
+     ${imgs.length?`<div class="dr-fotos">${imgs.map((p,i)=>`<div class="f" data-foto="${esc(p)}" data-i="${i}">Carregando…</div>`).join('')}</div>`:''}
+     ${links.map((u,i)=>`<a class="pm-btn" style="display:inline-block;margin:4px 4px 0 0" href="${esc(u)}" target="_blank">Abrir foto ${i+1}</a>`).join('')}
+     ${!r._fotos.length?'<div class="pm-mut">Nenhuma foto anexada.</div>':''}</div>
+   <div class="dr-sec"><h4>Por que precisa de reparo</h4><div class="dr-desc"><b style="color:#d94f00">${esc(r['Motivo do reparo'])}</b><br>${esc(r['Descrição'])}</div>
+     ${r['Obs. geral']?`<div class="pm-mut" style="margin-top:8px">Obs.: ${esc(r['Obs. geral'])}</div>`:''}</div>
+   <div class="dr-sec"><h4>Dados</h4><div class="dr-grid">
+     ${campo('Fornecedor',r['Fornecedor'])}${campo('Categoria',r['Categoria'])}${campo('Loja',r['Loja'])}${campo('Regional',r['Regional'])}
+     ${campo('KM',r['KM'])}${campo('Frota',r['Responsável'])}${campo('Registrado em',fmtData(r['Data/Hora']))}${campo('Protocolo',r['Protocolo'])}</div></div>
+   <div class="dr-sec"><h4>Status</h4><div class="dr-st">${STATUS.map(s=>{const c=STC[s];return `<button data-s="${s}" class="${s===r['Status']?'on':''}" style="${s===r['Status']?`background:${c[1]}`:`color:${c[1]}`}">${s}</button>`;}).join('')}</div></div>
+   <div class="dr-sec"><h4>Encaminhar</h4><div class="dr-act">
+     <button class="pm-btn pri" id="drCopy">Copiar texto p/ fornecedor</button>
+     <button class="pm-btn" id="drWpp">Enviar no WhatsApp</button>
+     ${ghFiles[id]?`<a class="pm-btn" target="_blank" href="https://github.com/${GH.owner}/${GH.repo}/blob/${GH.branch}/${ghFiles[id]}">Ver no GitHub</a>`:''}</div></div>`;
+  $('#drawer').classList.add('open'); $('#dBg').classList.add('open');
+  $('#drX').onclick=fecharFicha;
+  $('#drawer').querySelectorAll('.dr-fotos .f').forEach(f=>f.onclick=()=>abrirLB(imgs,+f.dataset.i,r));
+  carregarThumbs($('#drawer'));
+  $('#drawer').querySelectorAll('.dr-st button').forEach(b=>b.onclick=()=>mudarStatus(id,b.dataset.s));
+  const txt=()=>`*Solicitação de reparo — ${r['Fornecedor']}*\nPlaca: *${r['Placa']}*\nLoja: ${r['Loja']}${r['KM']?`\nKM: ${r['KM']}`:''}\nPeça: ${r['Peça/Local']} — ${r['Tipo de dano']} (${r['Gravidade']})\nMotivo: ${r['Motivo do reparo']}\nDescrição: ${r['Descrição']}\nProtocolo: ${r['Protocolo']}`;
+  $('#drCopy').onclick=()=>{navigator.clipboard.writeText(txt());toast('Texto copiado ✓');};
+  $('#drWpp').onclick=()=>open('https://wa.me/?text='+encodeURIComponent(txt()),'_blank');
+}
+function fecharFicha(){ $('#drawer').classList.remove('open'); $('#dBg').classList.remove('open'); fichaId=null; }
+$('#dBg').onclick=fecharFicha;
+async function mudarStatus(id,st){
+  const r=pData.find(x=>String(x['ID'])===String(id)); if(!r||r['Status']===st) return;
+  $('#drawer').querySelectorAll('.dr-st button').forEach(b=>b.disabled=true);
+  try{ if(GH_ON) await statusGH(id,st); else {
+      const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'status',key:sessionStorage.getItem('laudo_key'),id,status:st})});
+      const j=await res.json(); if(!j.ok) throw new Error(j.error);}
+    r['Status']=st; renderPainel(); abrirFicha(id); toast('Status: '+st+' ✓');
+  }catch(e){toast('Erro: '+e.message); abrirFicha(id);}
+}
+
+/* ---- visualizador de fotos ---- */
+let lbList=[],lbI=0,lbR=null;
+async function mostrarLB(){
+  const p=lbList[lbI]; $('#lbImg').src=''; $('#lbCap').textContent=`${lbR['Placa']} · ${lbR['Peça/Local']} — foto ${lbI+1} de ${lbList.length}`;
+  $('#lbP').style.display=$('#lbN').style.display=lbList.length>1?'':'none';
+  try{const u=await fotoURL(p); $('#lbImg').src=u; $('#lbDl').href=u; $('#lbDl').download=p.split('/').pop();}catch(e){toast('Erro ao carregar foto');}
+}
+function abrirLB(list,i,r){ lbList=list; lbI=i; lbR=r; $('#lb').classList.add('open'); mostrarLB(); }
+function fecharLB(){ $('#lb').classList.remove('open'); }
+$('#lbX').onclick=fecharLB;
+$('#lb').onclick=e=>{ if(e.target.id==='lb') fecharLB(); };
+$('#lbP').onclick=e=>{e.stopPropagation();lbI=(lbI-1+lbList.length)%lbList.length;mostrarLB();};
+$('#lbN').onclick=e=>{e.stopPropagation();lbI=(lbI+1)%lbList.length;mostrarLB();};
+document.addEventListener('keydown',e=>{
+  if($('#lb').classList.contains('open')){ if(e.key==='Escape')fecharLB(); if(e.key==='ArrowLeft')$('#lbP').click(); if(e.key==='ArrowRight')$('#lbN').click(); return; }
+  if(e.key==='Escape' && fichaId) fecharFicha();
+});
 
 /* Ativação (cola o link/token recebido) */
 $('#ativaOk').onclick=()=>{const v=$('#ativaTxt').value.trim();const m=v.match(/gh=([^&\s]+)/);
@@ -767,7 +1017,7 @@ window.voltarApp=()=>{
 /* ---------------- Boot ---------------- */
 atualizaFila();
 if(!REMOTO) $('#localBanner').classList.remove('hidden');
-if(location.hash.startsWith('#painel')||new URLSearchParams(location.search).has('painel')) initPainel(); else irPara(1);
+if(location.hash.startsWith('#painel')||new URLSearchParams(location.search).has('painel')) initPainel(); else { renderPerfil(); perfil()?irPara(1):abrirCfg(); }
 </script>
 </body>
 </html>
