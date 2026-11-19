@@ -35,6 +35,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp app/build/outputs/apk/debug/app-debug.apk LaudoAvaria.apk
+          echo "{\"versionCode\": ${GITHUB_RUN_NUMBER}, \"versionName\": \"1.${GITHUB_RUN_NUMBER}\", \"apk\": \"https://github.com/${GITHUB_REPOSITORY}/releases/download/laudo-apk/LaudoAvaria.apk\"}" > versao.json
+          cat versao.json
           gh release delete laudo-apk -y --cleanup-tag || true
-          gh release create laudo-apk LaudoAvaria.apk --title "Laudo de Avaria (APK)" --latest=false \
+          gh release create laudo-apk LaudoAvaria.apk versao.json --title "Laudo de Avaria (APK) v1.${GITHUB_RUN_NUMBER}" --latest=false \
             --notes "App dos frotas para registrar avarias. Instale o APK (permita 'fontes desconhecidas'), abra e cole o link de ativação recebido no WhatsApp."

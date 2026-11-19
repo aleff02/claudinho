@@ -11,8 +11,23 @@ android {
         applicationId = "br.movida.laudo"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        // número da compilação no GitHub Actions = versão (o app usa isso para saber se há atualização)
+        val build = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        versionCode = build
+        versionName = "1.$build"
+    }
+    // chave fixa: todas as versões saem com a mesma assinatura, então o Android aceita atualizar por cima
+    signingConfigs {
+        create("laudo") {
+            storeFile = file("laudo.keystore")
+            storePassword = "laudoavaria"
+            keyAlias = "laudo"
+            keyPassword = "laudoavaria"
+        }
+    }
+    buildTypes {
+        getByName("debug") { signingConfig = signingConfigs.getByName("laudo") }
+        getByName("release") { signingConfig = signingConfigs.getByName("laudo"); isMinifyEnabled = false }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

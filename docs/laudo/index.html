@@ -283,6 +283,10 @@ body.pmode:before{display:none}
     </div>
     <button class="btn orange" id="cfgSalvar">Salvar perfil</button>
     <button class="btn ghost hidden" id="cfgCancel" style="margin-top:10px">Cancelar</button>
+    <div class="card hidden" id="cfgApp" style="margin-top:14px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1"><b>App Android</b><small style="display:block;color:var(--mut)" id="cfgVer"></small></div>
+      <button class="iconbtn" id="cfgUpd">Verificar atualização</button>
+    </div>
   </section>
 
   <!-- Passo 2 -->
@@ -573,7 +577,10 @@ function renderPerfil(){const p=perfil(); if(!p) return;
 function abrirCfg(){const p=perfil();
   $('#cfgNome').value=p?.nome||''; $('#cfgLoja').value=p?.loja||''; $('#cfgHint').textContent='';
   $('#s0t').textContent=p?'Configurações':'Configure seu perfil'; $('#cfgCancel').classList.toggle('hidden',!p);
+  if(window.AndroidApp&&window.AndroidApp.verificarAtualizacao){$('#cfgApp').classList.remove('hidden');
+    try{$('#cfgVer').textContent='Versão '+window.AndroidApp.versao();}catch(e){}}
   irPara(0);}
+$('#cfgUpd').onclick=()=>{try{window.AndroidApp.verificarAtualizacao();}catch(e){toast('Atualize o app pelo link do WhatsApp');}};
 $('#cfgLoja').addEventListener('input',()=>{const v=$('#cfgLoja').value.trim(),h=$('#cfgHint');
   if(LOJA2REG[v]){h.textContent='✓ '+LOJA2REG[v];h.className='platehint ok';}else{h.textContent=v?'Escolha uma loja da lista':'';h.className='platehint bad';}});
 $('#cfgSalvar').onclick=()=>{const nome=$('#cfgNome').value.trim(),loja=$('#cfgLoja').value.trim();

@@ -37,6 +37,7 @@ class MainActivity : Activity() {
     private lateinit var web: WebView
     private var fotoCallback: ValueCallback<Array<Uri>>? = null
     private var fotoCamera: File? = null
+    private lateinit var atualizador: Atualizador
 
     @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +82,14 @@ class MainActivity : Activity() {
         }
 
         if (savedInstanceState != null) web.restoreState(savedInstanceState) else web.loadUrl(URL)
+
+        atualizador = Atualizador(this)
+        if (savedInstanceState == null && online()) atualizador.verificar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::atualizador.isInitialized) atualizador.retomar()
     }
 
     private fun online(): Boolean {
@@ -182,7 +191,10 @@ class MainActivity : Activity() {
         }
 
         @JavascriptInterface
-        fun versao(): String = "1.0"
+        fun versao(): String = atualizador.nomeVersao
+
+        @JavascriptInterface
+        fun verificarAtualizacao() { runOnUiThread { atualizador.verificar(avisarSeAtualizado = true) } }
     }
 
     @Deprecated("Deprecated in Java")
