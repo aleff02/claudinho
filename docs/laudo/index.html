@@ -280,8 +280,18 @@ td a{color:var(--cyan)}
 <div id="painel" class="wrap wide hidden">
   <header>
     <div class="brand"><div class="logo">M</div><div><h1>PAINEL DE AVARIAS</h1><small>Consolidação para fornecedores</small></div></div>
-    <div style="display:flex;gap:8px"><button class="iconbtn" id="pRefresh">⟳ Atualizar</button><button class="iconbtn" id="pExport">⬇ Excel</button></div>
+    <div style="display:flex;gap:8px"><button class="iconbtn" id="pLink">🔗 Link dos frotas</button><button class="iconbtn" id="pRefresh">⟳ Atualizar</button><button class="iconbtn" id="pExport">⬇ Excel</button></div>
   </header>
+  <div class="card hidden" id="pGh">
+    <label class="f">Token do GitHub (cole uma vez — fica salvo só neste aparelho)</label>
+    <div class="row"><input id="pGhTok" type="password" placeholder="github_pat_..." autocomplete="off"><button class="btn" id="pGhOk" style="flex:0 0 120px">Salvar</button></div>
+  </div>
+  <div class="card hidden" id="pLinkBox">
+    <label class="f">Link para mandar aos frotas</label>
+    <input id="pLinkTxt" readonly>
+    <div class="row" style="margin-top:10px"><button class="btn" id="pLinkCopy">Copiar link</button><button class="btn orange" id="pLinkWpp">Mandar no WhatsApp</button></div>
+    <small style="color:var(--mut);display:block;margin-top:8px">Ao abrir o link, o celular do frota já fica conectado. Não poste em lugar público.</small>
+  </div>
   <div class="card hidden" id="pLogin">
     <label class="f">Chave do painel</label>
     <div class="row"><input id="pKey" type="password" placeholder="Chave definida no Apps Script"><button class="btn" id="pEnter" style="flex:0 0 120px">Entrar</button></div>
@@ -640,9 +650,15 @@ let pData=[];
 function initPainel(){
   $('#app').classList.add('hidden');$('#bar').classList.add('hidden');$('#painel').classList.remove('hidden');$('#localBanner').classList.add('hidden');
   if(GH_ON){carregarGH();return;}
-  if(!API){$('#pLogin').classList.remove('hidden');$('#pErr').textContent='Abra o painel pelo link com o token do GitHub (…/laudo/#painel&gh=TOKEN).';return;}
+  if(!API){$('#pGh').classList.remove('hidden');return;}
   const k=sessionStorage.getItem('laudo_key'); if(k){carregar(k);} else $('#pLogin').classList.remove('hidden');
 }
+$('#pGhOk').onclick=()=>{const t=$('#pGhTok').value.trim();if(!/^(github_pat_|ghp_)/.test(t))return toast('Token inválido');
+  localStorage.setItem('laudo_gh',t);location.reload();};
+const linkFrotas=()=>location.origin+location.pathname+'#gh='+encodeURIComponent(GH.token);
+$('#pLink').onclick=()=>{if(!GH_ON)return toast('Salve o token primeiro');$('#pLinkTxt').value=linkFrotas();$('#pLinkBox').classList.toggle('hidden');};
+$('#pLinkCopy').onclick=()=>{navigator.clipboard.writeText(linkFrotas());toast('Link copiado ✓');};
+$('#pLinkWpp').onclick=()=>open('https://wa.me/?text='+encodeURIComponent('📋 *Laudo de Avaria* — registre aqui as avarias dos carros (placa, foto e motivo do reparo):\n'+linkFrotas()),'_blank');
 $('#pEnter').onclick=()=>carregar($('#pKey').value.trim());
 $('#pRefresh').onclick=()=>GH_ON?carregarGH():carregar(sessionStorage.getItem('laudo_key'));
 let ghFiles={}; // id -> caminho do json
