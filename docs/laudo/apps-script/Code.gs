@@ -12,7 +12,7 @@ const ABA         = 'Avarias';
 const PASTA_FOTOS = 'Laudos de Avaria - Fotos';
 
 const CABECALHO = ['ID','Protocolo','Data/Hora','Placa','Loja','Regional','KM','Fornecedor','Categoria','Peça/Local',
-  'Tipo de dano','Gravidade','Motivo do reparo','Descrição','Fotos','Responsável','Contato','Obs. geral','Status','Atualizado em'];
+  'Tipo de dano','Gravidade','Motivo do reparo','Descrição','Fotos','Responsável','Obs. geral','Status','Atualizado em'];
 
 function aba_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -70,7 +70,7 @@ function salvarLaudo_(p) {
     }).filter(String).join('\n');
     return [`${p.protocolo}-${i + 1}`, p.protocolo, new Date(p.dataHora || agora), p.placa, p.loja, p.regional, p.km,
       a.fornecedor, a.categoria, a.peca, a.tipo, a.severidade, a.motivo, a.descricao, links,
-      p.responsavel, p.contato, p.obs, 'Pendente', agora];
+      p.responsavel, p.obs, 'Pendente', agora];
   });
   if (linhas.length) sh.getRange(sh.getLastRow() + 1, 1, linhas.length, CABECALHO.length).setValues(linhas);
   return { ok: true, protocolo: p.protocolo, linhas: linhas.length };
