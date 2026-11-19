@@ -152,7 +152,11 @@ td a{color:var(--cyan)}
     <div class="brand"><div class="logo">M</div><div><h1>LAUDO DE AVARIA</h1><small>Frota · encaminhamento ao fornecedor</small></div></div>
     <button class="iconbtn" id="btnFila" title="Laudos salvos no aparelho">📦 <span id="filaN">0</span></button>
   </header>
-  <div class="banner hidden" id="localBanner">Modo local: os laudos ficam salvos neste aparelho. Exporte para Excel ou envie o resumo pelo WhatsApp.</div>
+  <div class="card hidden" id="localBanner" style="border-color:rgba(255,210,63,.4)">
+    <b style="color:var(--yellow)">Ative o envio automático</b>
+    <small style="display:block;color:var(--mut);margin:6px 0 10px">Cole aqui o link que você recebeu no WhatsApp. Sem ativar, os laudos ficam só neste aparelho.</small>
+    <div class="row"><input id="ativaTxt" placeholder="Cole o link aqui" autocomplete="off"><button class="btn" id="ativaOk" style="flex:0 0 100px">Ativar</button></div>
+  </div>
   <div class="progress"><div class="on"></div><div></div><div></div></div>
 
   <!-- Passo 1 -->
@@ -521,8 +525,11 @@ $('#shSave').onclick=()=>{
 /* Ditado por voz */
 let rec=null;
 const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SR) $('#mic').classList.add('hidden');
+const APP = !!window.AndroidApp;
+if(!SR && !APP) $('#mic').classList.add('hidden');
+window.onDitado=t=>{ $('#mic').classList.remove('rec'); if(t){const v=$('#shDesc').value; $('#shDesc').value=(v?v+' ':'')+t;} };
 $('#mic').onclick=()=>{
+  if(APP){ $('#mic').classList.add('rec'); window.AndroidApp.ditar(); return; }
   if(rec){pararMic();return;}
   rec=new SR(); rec.lang='pt-BR'; rec.continuous=true; rec.interimResults=false;
   const base=$('#shDesc').value;
@@ -628,7 +635,9 @@ function exportarExcel(rows,nome){
   const add=(nm,rs)=>{const ws=XLSX.utils.json_to_sheet(rs);ws['!cols']=Object.keys(rs[0]||{}).map(k=>({wch:Math.min(45,Math.max(10,k.length+2,...rs.map(r=>String(r[k]??'').length)))}));ws['!autofilter']={ref:ws['!ref']};XLSX.utils.book_append_sheet(wb,ws,nm.slice(0,31).replace(/[\\/?*\[\]:]/g,'-'));};
   add('Todas',rows);
   [...new Set(rows.map(r=>r['Fornecedor']))].sort().forEach(f=>add(f,rows.filter(r=>r['Fornecedor']===f)));
-  XLSX.writeFile(wb,`${nome}-${new Date().toISOString().slice(0,10)}.xlsx`);
+  const arq=`${nome}-${new Date().toISOString().slice(0,10)}.xlsx`;
+  if(window.AndroidApp) window.AndroidApp.salvarArquivo(arq, XLSX.write(wb,{bookType:'xlsx',type:'base64'}));
+  else XLSX.writeFile(wb,arq);
 }
 
 /* Resumo WhatsApp */
@@ -744,6 +753,16 @@ $('#pExport').onclick=()=>{
   if(!rs.length) return toast('Nada para exportar');
   exportarExcel(rs,'avarias-fornecedores');
 };
+
+/* Ativação (cola o link/token recebido) */
+$('#ativaOk').onclick=()=>{const v=$('#ativaTxt').value.trim();const m=v.match(/gh=([^&\s]+)/);
+  const t=m?decodeURIComponent(m[1]):v; if(!/^(github_pat_|ghp_)/.test(t)) return toast('Link inválido — copie o link inteiro');
+  localStorage.setItem('laudo_gh',t); toast('Ativado ✓'); setTimeout(()=>location.reload(),600);};
+/* Botão voltar do Android */
+window.voltarApp=()=>{
+  if($('#sheet').classList.contains('open')){fecharSheet();return true;}
+  if(!$('#app').classList.contains('hidden') && step>1 && step<4){irPara(step-1);return true;}
+  return false;};
 
 /* ---------------- Boot ---------------- */
 atualizaFila();
